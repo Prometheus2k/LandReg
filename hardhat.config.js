@@ -5,7 +5,7 @@ const { API_URL, PRIVATE_KEY } = process.env;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  defaultNetwork: "matic",
+  defaultNetwork: "hardhat",
   networks: {
     hardhat: {},
     matic: {
