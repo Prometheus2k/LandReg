@@ -44,7 +44,7 @@ const NavbarPage = () => {
           <FlexBetween gap="2rem">
             <Typography
               sx={{
-                fontSize: "20px",
+                fontSize: "17px",
                 "&:hover": {
                   color: primaryLight,
                   cursor: "pointer",
@@ -56,7 +56,7 @@ const NavbarPage = () => {
             </Typography>
             <Typography
               sx={{
-                fontSize: "20px",
+                fontSize: "17px",
                 "&:hover": {
                   color: primaryLight,
                   cursor: "pointer",
@@ -68,7 +68,7 @@ const NavbarPage = () => {
             </Typography>
             <Typography
               sx={{
-                fontSize: "20px",
+                fontSize: "17px",
                 "&:hover": {
                   color: primaryLight,
                   cursor: "pointer",
@@ -80,7 +80,7 @@ const NavbarPage = () => {
             </Typography>
             <Typography
               sx={{
-                fontSize: "20px",
+                fontSize: "17px",
                 "&:hover": {
                   color: primaryLight,
                   cursor: "pointer",
