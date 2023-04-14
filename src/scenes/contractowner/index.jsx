@@ -1,4 +1,4 @@
-import { useState } from "react";
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -15,34 +15,28 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-
 import MenuIcon from "@mui/icons-material/Menu";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import AddLocationIcon from "@mui/icons-material/AddLocation";
-import TerrainIcon from "@mui/icons-material/Terrain";
 import PersonIcon from "@mui/icons-material/Person";
-import CallReceivedIcon from "@mui/icons-material/CallReceived";
-import SendIcon from "@mui/icons-material/Send";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
+import ContactsIcon from "@mui/icons-material/Contacts";
 import LogoutIcon from "@mui/icons-material/Logout";
-import Dashboardpage from "./dashboardpage";
-import AddLandpage from "./addlandpage";
-import MyLandpage from "./myland";
-import LandGallerypage from "./landgallery";
-import Receivedpage from "./receivedrequest";
-import Sentpage from "./sent";
+import AddLIpage from "./addLI";
+import AllLIpage from "./allLI";
+import ChangeCOpage from "./changeCo";
 
 const drawerWidth = 240;
 
-export default function UserDashboard() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [page, setpage] = useState(0);
+export default function ContractDashboard() {
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [page, setpage] = React.useState(0);
   const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const SideNav = (
+  const drawer = (
     <div>
       <Toolbar />
       <Divider />
@@ -52,7 +46,7 @@ export default function UserDashboard() {
             <ListItemIcon>
               <PersonIcon />
             </ListItemIcon>
-            <ListItemText>Tony Stark</ListItemText>
+            <ListItemText>Steve Roger</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>
@@ -66,9 +60,9 @@ export default function UserDashboard() {
         >
           <ListItemButton>
             <ListItemIcon>
-              <DashboardIcon />
+              <AdminPanelSettingsIcon />
             </ListItemIcon>
-            <ListItemText>Dashboard</ListItemText>
+            <ListItemText>Add Land Inspector</ListItemText>
           </ListItemButton>
         </ListItem>
         <ListItem
@@ -79,9 +73,9 @@ export default function UserDashboard() {
         >
           <ListItemButton>
             <ListItemIcon>
-              <AddLocationIcon />
+              <ContactsIcon />
             </ListItemIcon>
-            <ListItemText>Add Land</ListItemText>
+            <ListItemText>All Land Inspector</ListItemText>
           </ListItemButton>
         </ListItem>
         <ListItem
@@ -92,48 +86,9 @@ export default function UserDashboard() {
         >
           <ListItemButton>
             <ListItemIcon>
-              <TerrainIcon />
+              <ManageHistoryIcon />
             </ListItemIcon>
-            <ListItemText>My Land</ListItemText>
-          </ListItemButton>
-        </ListItem>
-        <ListItem
-          disablePadding
-          onClick={() => {
-            setpage(4);
-          }}
-        >
-          <ListItemButton>
-            <ListItemIcon>
-              <TerrainIcon />
-            </ListItemIcon>
-            <ListItemText>Land Gallery</ListItemText>
-          </ListItemButton>
-        </ListItem>
-        <ListItem
-          disablePadding
-          onClick={() => {
-            setpage(5);
-          }}
-        >
-          <ListItemButton>
-            <ListItemIcon>
-              <CallReceivedIcon />
-            </ListItemIcon>
-            <ListItemText>Received Request</ListItemText>
-          </ListItemButton>
-        </ListItem>
-        <ListItem
-          disablePadding
-          onClick={() => {
-            setpage(6);
-          }}
-        >
-          <ListItemButton>
-            <ListItemIcon>
-              <SendIcon />
-            </ListItemIcon>
-            <ListItemText>Sent Land Request</ListItemText>
+            <ListItemText>Change Contract Owner</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>
@@ -152,22 +107,16 @@ export default function UserDashboard() {
     </div>
   );
 
-  const Content = (page) => {
+  const content = (page) => {
     switch (page) {
       case 1:
-        return <Dashboardpage />;
+        return <AddLIpage />;
       case 2:
-        return <AddLandpage />;
+        return <AllLIpage />;
       case 3:
-        return <MyLandpage />;
-      case 4:
-        return <LandGallerypage />;
-      case 5:
-        return <Receivedpage />;
-      case 6:
-        return <Sentpage />;
+        return <ChangeCOpage />;
       default:
-        return <Dashboardpage />;
+        return <AddLIpage />;
     }
   };
 
@@ -192,7 +141,7 @@ export default function UserDashboard() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            User Dashboard
+            Contract Owner Dashboard
           </Typography>
         </Toolbar>
       </AppBar>
@@ -217,7 +166,7 @@ export default function UserDashboard() {
             },
           }}
         >
-          {SideNav}
+          {drawer}
         </Drawer>
         <Drawer
           variant="permanent"
@@ -230,7 +179,7 @@ export default function UserDashboard() {
           }}
           open
         >
-          {SideNav}
+          {drawer}
         </Drawer>
       </Box>
       <Box
@@ -242,7 +191,7 @@ export default function UserDashboard() {
         }}
       >
         <Toolbar />
-        {Content(page)}
+        {content(page)}
       </Box>
     </Box>
   );

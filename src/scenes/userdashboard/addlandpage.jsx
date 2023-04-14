@@ -1,5 +1,5 @@
 const AddLandpage = () => {
-  return <dv>this is Add land page</dv>;
+  return <div>this is Add land page</div>;
 };
 
 export default AddLandpage;
