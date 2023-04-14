@@ -4,13 +4,14 @@ import {
   useMediaQuery,
   IconButton,
   Grid,
+  Stack,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
 } from "@mui/material";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
+
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import Navbar from "scenes/navbar";
 import lp_image from "asset/lp_image.png";

@@ -46,7 +46,13 @@ const NavbarPage = () => {
               Home
             </Typography>
             <Typography
-              sx={{ fontSize: "20px" }}
+              sx={{
+                fontSize: "20px",
+                "&:hover": {
+                  color: primaryLight,
+                  cursor: "pointer",
+                },
+              }}
               onClick={() => navigate("/user")}
             >
               User
