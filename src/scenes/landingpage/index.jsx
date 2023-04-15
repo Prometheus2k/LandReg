@@ -64,13 +64,14 @@ const LandingPage = () => {
         alignContent="center"
       >
         <Box sx={{ m: 2 }}>
-          <Card sx={{ maxWidth: 345, borderRadius: "16px" }}>
+          <Card sx={{ padding: "2rem", maxWidth: 360, borderRadius: "16px" }}>
             <CardMedia
               component="img"
               alt="Contract Owner"
               height="210"
               image={contract_owner}
             />
+
             <CardContent>
               <Typography variant="h3">
                 <Grid container justifyContent="center">
@@ -94,7 +95,7 @@ const LandingPage = () => {
         </Box>
 
         <Box sx={{ m: 2 }}>
-          <Card sx={{ maxWidth: 345, borderRadius: "16px" }}>
+          <Card sx={{ padding: "2rem", maxWidth: 360, borderRadius: "16px" }}>
             <CardMedia
               component="img"
               alt="land inscpector"
@@ -124,7 +125,7 @@ const LandingPage = () => {
         </Box>
 
         <Box sx={{ m: 2 }}>
-          <Card sx={{ maxWidth: 345, borderRadius: "16px" }}>
+          <Card sx={{ padding: "2rem", maxWidth: 360, borderRadius: "16px" }}>
             <CardMedia
               component="img"
               alt="user"
