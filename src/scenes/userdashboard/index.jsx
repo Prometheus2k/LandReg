@@ -25,7 +25,7 @@ import CallReceivedIcon from "@mui/icons-material/CallReceived";
 import SendIcon from "@mui/icons-material/Send";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Dashboardpage from "./dashboardpage";
-import AddLandpage from "./addlandpage";
+import AddLandpage from "./addlandpage/index.jsx";
 import MyLandpage from "./myland";
 import LandGallerypage from "./landgallery";
 import Receivedpage from "./receivedrequest";

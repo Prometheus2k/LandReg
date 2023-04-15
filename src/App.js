@@ -4,8 +4,10 @@ import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme";
 import LandingPage from "scenes/landingpage/index.jsx";
 import UserDashboard from "scenes/userdashboard/index.jsx";
-import ContractDashboard from "scenes/contractowner/index.jsx";
-import LandInspectorDashboard from "scenes/landinspector/index.jsx";
+import ContractDashboard from "scenes/contractowner";
+import LandInspectorDashboard from "scenes/landinspector";
+import RegisterPage from "scenes/registration/user";
+import LIRegisterPage from "scenes/registration/land_inspector";
 
 function App() {
   const theme = createTheme(themeSettings());
@@ -16,12 +18,23 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/user" element={<UserDashboard />} />
-            <Route path="/contract_owner" element={<ContractDashboard />} />
+            <Route exact path="/" element={<LandingPage />} />
+            <Route exact path="/user" element={<UserDashboard />} />
             <Route
+              exact
+              path="/contract_owner"
+              element={<ContractDashboard />}
+            />
+            <Route
+              exact
               path="/land_inspector"
               element={<LandInspectorDashboard />}
+            />
+            <Route exact path="/user/registration" element={<RegisterPage />} />
+            <Route
+              exact
+              path="/land_inspector/registration"
+              element={<LIRegisterPage />}
             />
           </Routes>
         </ThemeProvider>
