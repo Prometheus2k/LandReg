@@ -8,6 +8,7 @@ import ContractDashboard from "scenes/contractowner";
 import LandInspectorDashboard from "scenes/landinspector";
 import RegisterPage from "scenes/registration/user";
 import LIRegisterPage from "scenes/registration/land_inspector";
+import LoginPage from "scenes/loginpage/index";
 
 function App() {
   const theme = createTheme(themeSettings());
@@ -36,6 +37,7 @@ function App() {
               path="/land_inspector/registration"
               element={<LIRegisterPage />}
             />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>
