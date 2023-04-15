@@ -31,12 +31,21 @@ import LandGallerypage from "./landgallery";
 import Receivedpage from "./receivedrequest";
 import Sentpage from "./sent";
 
+import { useDispatch, useSelector } from "react-redux";
+import { setUserPage } from "state";
+import { useEffect } from "react";
+
 const drawerWidth = 240;
 
 export default function UserDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [page, setpage] = useState(0);
+  // const [page, setpage] = useState(0);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setUserPage({ User_page: 1 }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -61,7 +70,7 @@ export default function UserDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            setpage(1);
+            dispatch(setUserPage({ User_page: 1 }));
           }}
         >
           <ListItemButton>
@@ -74,7 +83,7 @@ export default function UserDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            setpage(2);
+            dispatch(setUserPage({ User_page: 2 }));
           }}
         >
           <ListItemButton>
@@ -87,7 +96,7 @@ export default function UserDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            setpage(3);
+            dispatch(setUserPage({ User_page: 3 }));
           }}
         >
           <ListItemButton>
@@ -100,7 +109,7 @@ export default function UserDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            setpage(4);
+            dispatch(setUserPage({ User_page: 4 }));
           }}
         >
           <ListItemButton>
@@ -113,7 +122,7 @@ export default function UserDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            setpage(5);
+            dispatch(setUserPage({ User_page: 5 }));
           }}
         >
           <ListItemButton>
@@ -126,7 +135,7 @@ export default function UserDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            setpage(6);
+            dispatch(setUserPage({ User_page: 6 }));
           }}
         >
           <ListItemButton>
@@ -152,8 +161,10 @@ export default function UserDashboard() {
     </div>
   );
 
-  const Content = (page) => {
-    switch (page) {
+  const pageno = useSelector((state) => state.User_page);
+
+  const Content = (pageno) => {
+    switch (pageno) {
       case 1:
         return <Dashboardpage />;
       case 2:
@@ -242,7 +253,7 @@ export default function UserDashboard() {
         }}
       >
         <Toolbar />
-        {Content(page)}
+        {Content(pageno)}
       </Box>
     </Box>
   );
