@@ -23,6 +23,7 @@ import ContactsIcon from "@mui/icons-material/Contacts";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AddLIpage from "./addLI";
 import AllLIpage from "./allLI";
+import LIRegisterPage from "./addLI";
 import ChangeCOpage from "./changeCo";
 import { useDispatch, useSelector } from "react-redux";
 import { setCOPage } from "state";
@@ -121,7 +122,7 @@ export default function ContractDashboard() {
   const content = (pageno) => {
     switch (pageno) {
       case 1:
-        return <AddLIpage />;
+        return <LIRegisterPage />;
       case 2:
         return <AllLIpage />;
       case 3:
