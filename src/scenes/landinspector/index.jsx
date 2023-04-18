@@ -27,9 +27,8 @@ import VerifyLandPage from "./verifylandpage";
 import TransferOwnershipPage from "./transferownershippage";
 import { VerifiedUser } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setLiPage } from "state";
 import { useEffect, useState } from "react";
+import { LandState } from "context/landProvider";
 
 const drawerWidth = 240;
 
@@ -37,9 +36,9 @@ export default function LandInspectorDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
   // const [page, setpage] = useState(0);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { LI_page, setLIPage } = LandState();
   useEffect(() => {
-    dispatch(setLiPage({ LI_page: 1 }));
+    setLIPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -66,7 +65,7 @@ export default function LandInspectorDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            dispatch(setLiPage({ LI_page: 1 }));
+            setLIPage(1);
           }}
         >
           <ListItemButton>
@@ -79,7 +78,7 @@ export default function LandInspectorDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            dispatch(setLiPage({ LI_page: 2 }));
+            setLIPage(2);
           }}
         >
           <ListItemButton>
@@ -92,7 +91,7 @@ export default function LandInspectorDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            dispatch(setLiPage({ LI_page: 3 }));
+            setLIPage(3);
           }}
         >
           <ListItemButton>
@@ -105,7 +104,7 @@ export default function LandInspectorDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            dispatch(setLiPage({ LI_page: 4 }));
+            setLIPage(4);
           }}
         >
           <ListItemButton>
@@ -130,8 +129,6 @@ export default function LandInspectorDashboard() {
       <Divider />
     </div>
   );
-
-  const pageno = useSelector((state) => state.LI_page);
 
   const content = (pageno) => {
     switch (pageno) {
@@ -219,7 +216,7 @@ export default function LandInspectorDashboard() {
         }}
       >
         <Toolbar />
-        {content(pageno)}
+        {content(LI_page)}
       </Box>
     </Box>
   );

@@ -25,9 +25,8 @@ import AddLIpage from "./addLI";
 import AllLIpage from "./allLI";
 import LIRegisterPage from "./addLI";
 import ChangeCOpage from "./changeCo";
-import { useDispatch, useSelector } from "react-redux";
-import { setCOPage } from "state";
 import { useEffect, useState } from "react";
+import { LandState } from "context/landProvider";
 
 const drawerWidth = 240;
 
@@ -35,10 +34,10 @@ export default function ContractDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
   // const [page, setpage] = useState(0);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { CO_page, setCOPage } = LandState();
 
   useEffect(() => {
-    dispatch(setCOPage({ CO_page: 1 }));
+    setCOPage(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -65,7 +64,7 @@ export default function ContractDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            dispatch(setCOPage({ CO_page: 1 }));
+            setCOPage(1);
           }}
         >
           <ListItemButton>
@@ -78,7 +77,7 @@ export default function ContractDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            dispatch(setCOPage({ CO_page: 2 }));
+            setCOPage(2);
           }}
         >
           <ListItemButton>
@@ -91,7 +90,7 @@ export default function ContractDashboard() {
         <ListItem
           disablePadding
           onClick={() => {
-            dispatch(setCOPage({ CO_page: 3 }));
+            setCOPage(3);
           }}
         >
           <ListItemButton>
@@ -116,8 +115,6 @@ export default function ContractDashboard() {
       <Divider />
     </div>
   );
-
-  const pageno = useSelector((state) => state.CO_page);
 
   const content = (pageno) => {
     switch (pageno) {
@@ -203,7 +200,7 @@ export default function ContractDashboard() {
         }}
       >
         <Toolbar />
-        {content(pageno)}
+        {content(CO_page)}
       </Box>
     </Box>
   );

@@ -9,6 +9,7 @@ import LandInspectorDashboard from "scenes/landinspector";
 import RegisterPage from "scenes/registration/user";
 import LIRegisterPage from "scenes/registration/land_inspector";
 import LoginPage from "scenes/loginpage/index";
+import LandProvider from "context/landProvider";
 
 function App() {
   const theme = createTheme(themeSettings());
@@ -16,30 +17,36 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Routes>
-            <Route exact path="/" element={<LandingPage />} />
-            <Route exact path="/user" element={<UserDashboard />} />
-            <Route
-              exact
-              path="/contract_owner"
-              element={<ContractDashboard />}
-            />
-            <Route
-              exact
-              path="/land_inspector"
-              element={<LandInspectorDashboard />}
-            />
-            <Route exact path="/user/registration" element={<RegisterPage />} />
-            <Route
-              exact
-              path="/land_inspector/registration"
-              element={<LIRegisterPage />}
-            />
-            <Route path="/login" element={<LoginPage />} />
-          </Routes>
-        </ThemeProvider>
+        <LandProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Routes>
+              <Route exact path="/" element={<LandingPage />} />
+              <Route exact path="/user" element={<UserDashboard />} />
+              <Route
+                exact
+                path="/contract_owner"
+                element={<ContractDashboard />}
+              />
+              <Route
+                exact
+                path="/land_inspector"
+                element={<LandInspectorDashboard />}
+              />
+              <Route
+                exact
+                path="/user/registration"
+                element={<RegisterPage />}
+              />
+              <Route
+                exact
+                path="/land_inspector/registration"
+                element={<LIRegisterPage />}
+              />
+              <Route path="/login" element={<LoginPage />} />
+            </Routes>
+          </ThemeProvider>
+        </LandProvider>
       </BrowserRouter>
     </div>
   );

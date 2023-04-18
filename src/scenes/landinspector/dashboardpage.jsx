@@ -1,9 +1,8 @@
 import { Card, CardContent, List, Typography } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { setLiPage } from "state";
+import { LandState } from "context/landProvider";
 
 const Dashboardpage = () => {
-  const dispatch = useDispatch();
+  const { setLIPage } = LandState();
   return (
     <List sx={{ display: "flex" }}>
       <Card
@@ -14,7 +13,7 @@ const Dashboardpage = () => {
           bgcolor: "lightGreen",
         }}
         onClick={() => {
-          dispatch(setLiPage({ LI_page: 2 }));
+          setLIPage(2);
         }}
       >
         <CardContent>
@@ -30,7 +29,7 @@ const Dashboardpage = () => {
           bgcolor: "lightBlue",
         }}
         onClick={() => {
-          dispatch(setLiPage({ LI_page: 3 }));
+          setLIPage(3);
         }}
       >
         <CardContent>
@@ -46,7 +45,7 @@ const Dashboardpage = () => {
           bgcolor: "yellow",
         }}
         onClick={() => {
-          dispatch(setLiPage({ LI_page: 4 }));
+          setLIPage(4);
         }}
       >
         <CardContent>
