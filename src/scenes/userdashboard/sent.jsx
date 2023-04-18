@@ -8,10 +8,8 @@ import {
   TableRow,
   Paper,
   Button,
-  colors,
 } from "@mui/material";
-import { color } from "@mui/system";
-import Paymentmodel from "./paymentbox";
+
 function createData(number, address, name, id_proof, pan, document, verify) {
   return { number, address, name, id_proof, pan, document, verify };
 }
@@ -24,7 +22,6 @@ const rows = [
     "Accepted",
     "2000.0",
     "Make Payment",
-    
   ),
 ];
 const Sentpage = () => {
@@ -39,7 +36,6 @@ const Sentpage = () => {
             <TableCell align="center">Status</TableCell>
             <TableCell align="center">Price(in $)</TableCell>
             <TableCell align="center">Make Payment</TableCell>
-            
           </TableRow>
         </TableHead>
         <TableBody>
@@ -56,16 +52,16 @@ const Sentpage = () => {
               <TableCell align="center">{row.id_proof}</TableCell>
               <TableCell align="center">{row.pan}</TableCell>
               <TableCell align="center">
-               <Button onClick={() => {Paymentmodel()}} color="success" variant="contained">{row.document}</Button> 
-                </TableCell>
-             
+                <Button onClick={() => {}} color="success" variant="contained">
+                  {row.document}
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
   );
-
 };
 
 export default Sentpage;

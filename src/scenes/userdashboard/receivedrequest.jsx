@@ -55,10 +55,14 @@ const Receivedpage = () => {
               <TableCell align="center">{row.id_proof}</TableCell>
               <TableCell align="center">{row.pan}</TableCell>
               <TableCell align="center">
-               <Button color="error" variant="contained">{row.document}</Button> 
-                </TableCell>
+                <Button color="error" variant="contained">
+                  {row.document}
+                </Button>
+              </TableCell>
               <TableCell align="center">
-                <Button color="success" variant="contained">{row.verify}</Button>
+                <Button color="success" variant="contained">
+                  {row.verify}
+                </Button>
               </TableCell>
             </TableRow>
           ))}
