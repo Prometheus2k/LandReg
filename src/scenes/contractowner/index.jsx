@@ -32,11 +32,25 @@ const drawerWidth = 240;
 
 export default function ContractDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  // const [page, setpage] = useState(0);
+  const [address, setAddress] = useState("");
   const navigate = useNavigate();
-  const { CO_page, setCOPage } = LandState();
+  const {
+    provider,
+    setProvider,
+    signer,
+    setSigner,
+    contract,
+    setContract,
+    CO_page,
+    setCOPage,
+  } = LandState();
 
   useEffect(() => {
+    const getCOAddress = async () => {
+      const address = await signer.getAddress();
+      setAddress(address);
+    };
+    getCOAddress();
     setCOPage(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -55,7 +69,7 @@ export default function ContractDashboard() {
             <ListItemIcon>
               <PersonIcon />
             </ListItemIcon>
-            <ListItemText>Steve Roger</ListItemText>
+            <ListItemText>{address.slice(0, 15) + "....."}</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>

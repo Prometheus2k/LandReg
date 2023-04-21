@@ -5,6 +5,7 @@ import Form from "./Form";
 const LIRegisterPage = () => {
   const theme = useTheme();
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+
   // const navigate = useNavigate();
   // const primaryLight = theme.palette.primary.light;
   return (

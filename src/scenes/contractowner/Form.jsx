@@ -9,21 +9,24 @@ import {
 
 import { Formik } from "formik";
 import * as yup from "yup";
+import { LandState } from "context/landProvider";
+import { ethers } from "ethers";
+import abi from "../../web3/contract/abi.json";
 
 const registerSchema = yup.object().shape({
-  firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
+  publicKey: yup.string().required("required"),
+  Name: yup.string().required("required"),
+  // email: yup.string().email("invalid email").required("required"),
   age: yup.string().required("required"),
   city: yup.string().required("required"),
-  document: yup.string().required("required"),
-  aadharcardno: yup.string().required("required"),
-  pancardno: yup.string().required("required"),
+  // document: yup.string().required("required"),
+  // aadharcardno: yup.string().required("required"),
+  // pancardno: yup.string().required("required"),
 });
 
 const initialValuesRegister = {
-  firstName: "",
-  lastName: "",
+  publicKey: "",
+  Name: "",
   age: "",
   city: "",
 };
@@ -32,11 +35,24 @@ const Form = () => {
   const { palette } = useTheme();
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const { provider, setProvider, signer, setSigner, contract, setContract } =
+    LandState();
 
   return (
     <Formik
       initialValues={initialValuesRegister}
       validationSchema={registerSchema}
+      onSubmit={async (values, { setSubmitting }) => {
+        console.log(values);
+        setSubmitting(false);
+        let isLandInspectorAdded = await contract.addLandInspector(
+          values.publicKey,
+          values.Name,
+          values.age,
+          values.city,
+        );
+        console.log(isLandInspectorAdded);
+      }}
     >
       {({
         values,
@@ -44,9 +60,10 @@ const Form = () => {
         touched,
         handleBlur,
         handleChange,
+        handleSubmit,
         setFieldValue,
       }) => (
-        <form>
+        <form onSubmit={handleSubmit}>
           <Box
             display="grid"
             gap="30px"
@@ -56,23 +73,23 @@ const Form = () => {
             }}
           >
             <TextField
-              label="First Name"
+              label="Public Key"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.firstName}
-              name="firstName"
-              error={Boolean(touched.firstName) && Boolean(errors.firstName)}
-              helperText={touched.firstName && errors.firstName}
+              value={values.publicKey}
+              name="publicKey"
+              error={Boolean(touched.publicKey) && Boolean(errors.publicKey)}
+              helperText={touched.publicKey && errors.publicKey}
               sx={{ gridColumn: "span 2" }}
             />
             <TextField
-              label="Last Name"
+              label="Name"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.lastName}
-              name="lastName"
-              error={Boolean(touched.lastName) && Boolean(errors.lastName)}
-              helperText={touched.lastName && errors.lastName}
+              value={values.Name}
+              name="Name"
+              error={Boolean(touched.Name) && Boolean(errors.Name)}
+              helperText={touched.Name && errors.Name}
               sx={{ gridColumn: "span 2" }}
             />
 
@@ -110,7 +127,7 @@ const Form = () => {
                 "&:hover": { color: palette.primary.main },
               }}
             >
-              {"REGISTOR"}
+              {"REGISTER"}
             </Button>
             <Typography
               sx={{

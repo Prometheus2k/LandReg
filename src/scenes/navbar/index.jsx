@@ -9,6 +9,7 @@ import {
 import { Menu, Close } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
+import { LandState } from "context/landProvider";
 
 const NavbarPage = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -19,6 +20,17 @@ const NavbarPage = () => {
   const background = theme.palette.background.default;
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
+  const { provider, setProvider, signer, setSigner, contract, setContract } =
+    LandState();
+  const contractOwnerLogin = async () => {
+    let contractOwnerAddress = await signer.getAddress();
+    // console.log(contractOwnerAddress);
+    let isContractOwnerAuth = await contract.isContractOwner(
+      contractOwnerAddress,
+    );
+    // console.log(isContractOwnerAuth);
+    return isContractOwnerAuth;
+  };
 
   return (
     <Box sx={{ boxShadow: 4 }}>
@@ -62,7 +74,9 @@ const NavbarPage = () => {
                   cursor: "pointer",
                 },
               }}
-              onClick={() => navigate("/land_inspector")}
+              onClick={() => {
+                navigate("/land_inspector");
+              }}
             >
               Land Inspector
             </Typography>
@@ -74,7 +88,13 @@ const NavbarPage = () => {
                   cursor: "pointer",
                 },
               }}
-              onClick={() => navigate("/contract_owner")}
+              onClick={async () => {
+                if (await contractOwnerLogin()) {
+                  navigate("/contract_owner");
+                } else {
+                  alert("You are not a contract owner");
+                }
+              }}
             >
               Contract Owner
             </Typography>
@@ -142,7 +162,13 @@ const NavbarPage = () => {
               </Typography>
               <Typography
                 sx={{ fontSize: "17px" }}
-                onClick={() => navigate("/contract_owner")}
+                onClick={async () => {
+                  if (await contractOwnerLogin()) {
+                    navigate("/contract_owner");
+                  } else {
+                    alert("You are not a contract owner");
+                  }
+                }}
               >
                 Contract Owner
               </Typography>

@@ -14,7 +14,7 @@ const ConnectWallet = async () => {
       });
     }
     provider = new ethers.BrowserProvider(ethereum);
-    signer = provider.getSigner();
+    signer = await provider.getSigner();
     contract = new ethers.Contract(contractAddress, contractABI, signer);
   } catch (err) {
     console.log(err);
