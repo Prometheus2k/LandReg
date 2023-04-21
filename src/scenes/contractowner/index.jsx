@@ -52,8 +52,7 @@ export default function ContractDashboard() {
     };
     getCOAddress();
     setCOPage(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setCOPage, signer]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);

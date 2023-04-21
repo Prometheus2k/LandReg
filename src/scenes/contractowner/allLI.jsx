@@ -43,28 +43,29 @@ const AllLIpage = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.id}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.id.toString()}
-              </TableCell>
-              <TableCell align="center">{row._inspectorAddress}</TableCell>
-              <TableCell align="center">{row.name}</TableCell>
-              <TableCell align="center">{row.city}</TableCell>
-              <TableCell align="center">
-                <Button
-                  onClick={() => removeLI(row._inspectorAddress)}
-                  variant="contained"
-                  sx={{ bgcolor: "red" }}
-                >
-                  Remove
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
+          {rows.length !== 0 &&
+            rows.map((row) => (
+              <TableRow
+                key={row.id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {row.id.toString()}
+                </TableCell>
+                <TableCell align="center">{row._inspectorAddress}</TableCell>
+                <TableCell align="center">{row.name}</TableCell>
+                <TableCell align="center">{row.city}</TableCell>
+                <TableCell align="center">
+                  <Button
+                    onClick={() => removeLI(row._inspectorAddress)}
+                    variant="contained"
+                    sx={{ bgcolor: "red" }}
+                  >
+                    Remove
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </TableContainer>

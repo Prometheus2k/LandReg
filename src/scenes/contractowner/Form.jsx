@@ -10,8 +10,6 @@ import {
 import { Formik } from "formik";
 import * as yup from "yup";
 import { LandState } from "context/landProvider";
-import { ethers } from "ethers";
-import abi from "../../web3/contract/abi.json";
 
 const registerSchema = yup.object().shape({
   publicKey: yup.string().required("required"),
