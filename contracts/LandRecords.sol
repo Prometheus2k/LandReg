@@ -138,6 +138,19 @@ contract LandRecords {
         return allLandInspectorList[1];
     }
 
+    function returnAllLandInspectorsDetails()
+        public
+        view
+        returns (landInspector[] memory)
+    {
+        uint len = allLandInspectorList[1].length;
+        landInspector[] memory allInspectors = new landInspector[](len);
+        for (uint i = 0; i < len; i++) {
+            allInspectors[i] = addressToInspector[allLandInspectorList[1][i]];
+        }
+        return allInspectors;
+    }
+
     function removeLandInspector(address _adrs) public {
         require(msg.sender == contractOwner, "You are not contractOwner");
         require(RegisteredInspector[_adrs], "Land Inspector not found");

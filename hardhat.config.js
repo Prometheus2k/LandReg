@@ -1,7 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 const dotenv = require("dotenv");
 dotenv.config({ path: __dirname + "/.env" });
-const { API_URL, PRIVATE_KEY } = process.env;
+const { API_URL, PRIVATE_KEY1, PRIVATE_KEY2 } = process.env;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
     hardhat: {},
     matic: {
       url: API_URL,
-      accounts: [PRIVATE_KEY],
+      accounts: [PRIVATE_KEY1, PRIVATE_KEY2],
     },
   },
   solidity: {
