@@ -32,18 +32,31 @@ import Receivedpage from "./receivedrequest";
 import Sentpage from "./sent";
 import { LandState } from "context/landProvider";
 import { useEffect } from "react";
+import LoginPage from "scenes/loginpage";
+import RegisterPage from "scenes/registration/user";
 
 const drawerWidth = 240;
 
 export default function UserDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isreg, setIsReg] = useState(false);
   const { User_page, setUserPage } = LandState();
-  // const [page, setpage] = useState(0);
+  const { provider, setProvider, signer, setSigner, contract, setContract } =
+    LandState();
   const navigate = useNavigate();
   useEffect(() => {
+    const fetchRegistered = async () => {
+      console.log("fetching");
+      const account = await signer.getAddress();
+      console.log(account);
+      const res = await contract.isUserRegistered(account);
+      console.log(res);
+      setIsReg(res);
+    };
+    fetchRegistered();
+    console.log(isreg);
     setUserPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [contract, isreg, setUserPage, signer]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -178,79 +191,83 @@ export default function UserDashboard() {
     }
   };
 
-  return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
+  if (isreg === true) {
+    return (
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar
+          position="fixed"
+          sx={{
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
+            ml: { sm: `${drawerWidth}px` },
+          }}
+        >
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              User Dashboard
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Box
+          component="nav"
+          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          aria-label="mailbox folders"
+        >
+          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+          <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+            sx={{
+              display: { xs: "block", sm: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+              },
+            }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            User Dashboard
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders"
-      >
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
+            {SideNav}
+          </Drawer>
+          <Drawer
+            variant="permanent"
+            sx={{
+              display: { xs: "none", sm: "block" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+              },
+            }}
+            open
+          >
+            {SideNav}
+          </Drawer>
+        </Box>
+        <Box
+          component="main"
           sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
+            flexGrow: 1,
+            p: 3,
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
         >
-          {SideNav}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: "none", sm: "block" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
-          }}
-          open
-        >
-          {SideNav}
-        </Drawer>
+          <Toolbar />
+          {Content(User_page)}
+        </Box>
       </Box>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-        }}
-      >
-        <Toolbar />
-        {Content(User_page)}
-      </Box>
-    </Box>
-  );
+    );
+  } else if (isreg === false) {
+    return <RegisterPage />;
+  }
 }

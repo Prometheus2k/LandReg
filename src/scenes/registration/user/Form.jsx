@@ -7,11 +7,12 @@ import {
   useTheme,
 } from "@mui/material";
 
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
 import * as yup from "yup";
-import Dropzone from "react-dropzone";
-import FlexBetween from "components/FlexBetween";
+import axios from "axios";
+import { useState } from "react";
+import { LandState } from "context/landProvider";
+import { useNavigate } from "react-router-dom";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -37,8 +38,43 @@ const initialValuesRegister = {
 
 const Form = () => {
   const { palette } = useTheme();
+  const [file, setFile] = useState();
+  const [myipfsHash, setIPFSHASH] = useState("");
+  const { provider, setProvider, signer, setSigner, contract, setContract } =
+    LandState();
+
+  const navigate = useNavigate();
+
+  const handleFile = async (fileToHandle) => {
+    console.log("starting");
+    const formData = new FormData();
+    formData.append("file", fileToHandle);
+
+    // call the keys from .env
+
+    const API_KEY = "a60dc487cef5582e63e3";
+    const API_SECRET =
+      "6c027de60d679ac4d05fe6d7963fcb885f0b10b893ca943e6725f2d64cbcaadc";
+
+    const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+
+    const response = await axios.post(url, formData, {
+      maxContentLength: "Infinity",
+      headers: {
+        "Content-Type": `multipart/form-data;boundary=${formData._boundary}`,
+        pinata_api_key: API_KEY,
+        pinata_secret_api_key: API_SECRET,
+      },
+    });
+
+    setIPFSHASH(response.data.IpfsHash);
+    console.log(myipfsHash);
+  };
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
 
   return (
     <Formik
@@ -53,7 +89,7 @@ const Form = () => {
         handleChange,
         setFieldValue,
       }) => (
-        <form>
+        <form onSubmit={handleSubmit}>
           <Box
             display="grid"
             gap="30px"
@@ -82,6 +118,7 @@ const Form = () => {
               helperText={touched.lastName && errors.lastName}
               sx={{ gridColumn: "span 2" }}
             />
+
             <TextField
               label="Age"
               onBlur={handleBlur}
@@ -108,32 +145,12 @@ const Form = () => {
               borderRadius="5px"
               p="1rem"
             >
-              <Dropzone
-                acceptedFiles=".jpg,.jpeg,.png"
-                multiple={false}
-                onDrop={(acceptedFiles) =>
-                  setFieldValue("picture", acceptedFiles[0])
-                }
-              >
-                {({ getRootProps, getInputProps }) => (
-                  <Box
-                    {...getRootProps()}
-                    border={`2px dashed ${palette.primary.main}`}
-                    p="1rem"
-                    sx={{ "&:hover": { cursor: "pointer" } }}
-                  >
-                    <input {...getInputProps()} />
-                    {!values.picture ? (
-                      <p>Add Your Document Here</p>
-                    ) : (
-                      <FlexBetween>
-                        <Typography>{values.picture.name}</Typography>
-                        <EditOutlinedIcon />
-                      </FlexBetween>
-                    )}
-                  </Box>
-                )}
-              </Dropzone>
+              <input
+                type="file"
+                onChange={(event) => setFile(event.target.files[0])}
+              />
+              Add document
+              <Button onClick={() => handleFile(file)}> Upload </Button>
             </Box>
             <TextField
               label="Email"
@@ -171,6 +188,23 @@ const Form = () => {
 
           <Box>
             <Button
+              onClick={async () => {
+                console.log(values);
+                const docUrl = `https://gateway.pinata.cloud/ipfs/${myipfsHash}`;
+                console.log(docUrl);
+                const account = await signer.getAddress();
+                let res = await contract.registerNewUser(
+                  values.firstName + values.lastName,
+                  values.email,
+                  values.age,
+                  values.city,
+                  values.aadharcardno,
+                  values.pancardno,
+                  docUrl,
+                );
+                console.log(res);
+                navigate("/user");
+              }}
               fullWidth
               type="submit"
               sx={{
@@ -181,7 +215,7 @@ const Form = () => {
                 "&:hover": { color: palette.primary.main },
               }}
             >
-              {"REGISTOR"}
+              {"REGISTER"}
             </Button>
             <Typography
               sx={{
