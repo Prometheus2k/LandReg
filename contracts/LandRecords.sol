@@ -21,9 +21,10 @@ contract LandRecords {
     }
 
     struct user {
+        uint id;
         string name;
         string email;
-        address id;
+        address _userAddress;
         uint age;
         string city;
         string document;
@@ -138,6 +139,12 @@ contract LandRecords {
         return allLandInspectorList[1];
     }
 
+    function returnLandInspector(
+        address _adrs
+    ) public view returns (landInspector memory) {
+        return addressToInspector[_adrs];
+    }
+
     function returnAllLandInspectorsDetails()
         public
         view
@@ -190,6 +197,7 @@ contract LandRecords {
         allUsersList[1].push(msg.sender);
         AllUsers[totalUsersCount] = msg.sender;
         addressToUser[msg.sender] = user(
+            totalUsersCount,
             _name,
             _email,
             msg.sender,
@@ -221,6 +229,19 @@ contract LandRecords {
 
     function ReturnAllUserList() public view returns (address[] memory) {
         return allUsersList[1];
+    }
+
+    function ReturnUser(address id) public view returns (user memory) {
+        return addressToUser[id];
+    }
+
+    function ReturnAllUserDetails() public view returns (user[] memory) {
+        uint len = allUsersList[1].length;
+        user[] memory allUsers = new user[](len);
+        for (uint i = 0; i < len; i++) {
+            allUsers[i] = addressToUser[allUsersList[1][i]];
+        }
+        return allUsers;
     }
 
     function addLand(
