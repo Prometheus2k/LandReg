@@ -39,24 +39,20 @@ const drawerWidth = 240;
 
 export default function UserDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isreg, setIsReg] = useState(false);
   const { User_page, setUserPage } = LandState();
+  const [name, setName] = useState("");
   const { provider, setProvider, signer, setSigner, contract, setContract } =
     LandState();
   const navigate = useNavigate();
   useEffect(() => {
-    const fetchRegistered = async () => {
-      console.log("fetching");
+    const fetchName = async () => {
       const account = await signer.getAddress();
-      console.log(account);
-      const res = await contract.isUserRegistered(account);
-      console.log(res);
-      setIsReg(res);
+      const values = await contract.ReturnUser(account);
+      setName(values.name);
     };
-    fetchRegistered();
-    console.log(isreg);
+    fetchName();
     setUserPage(1);
-  }, [contract, isreg, setUserPage, signer]);
+  }, [contract, setUserPage, signer]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -72,7 +68,7 @@ export default function UserDashboard() {
             <ListItemIcon>
               <PersonIcon />
             </ListItemIcon>
-            <ListItemText>Tony Stark</ListItemText>
+            <ListItemText>{name}</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>
@@ -191,83 +187,79 @@ export default function UserDashboard() {
     }
   };
 
-  if (isreg === true) {
-    return (
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar
-          position="fixed"
+  return (
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div">
+            User Dashboard
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label="mailbox folders"
+      >
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
           sx={{
-            width: { sm: `calc(100% - ${drawerWidth}px)` },
-            ml: { sm: `${drawerWidth}px` },
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
           }}
         >
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-              sx={{ mr: 2, display: { sm: "none" } }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap component="div">
-              User Dashboard
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Box
-          component="nav"
-          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-          aria-label="mailbox folders"
-        >
-          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-          <Drawer
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-            sx={{
-              display: { xs: "block", sm: "none" },
-              "& .MuiDrawer-paper": {
-                boxSizing: "border-box",
-                width: drawerWidth,
-              },
-            }}
-          >
-            {SideNav}
-          </Drawer>
-          <Drawer
-            variant="permanent"
-            sx={{
-              display: { xs: "none", sm: "block" },
-              "& .MuiDrawer-paper": {
-                boxSizing: "border-box",
-                width: drawerWidth,
-              },
-            }}
-            open
-          >
-            {SideNav}
-          </Drawer>
-        </Box>
-        <Box
-          component="main"
+          {SideNav}
+        </Drawer>
+        <Drawer
+          variant="permanent"
           sx={{
-            flexGrow: 1,
-            p: 3,
-            width: { sm: `calc(100% - ${drawerWidth}px)` },
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
           }}
+          open
         >
-          <Toolbar />
-          {Content(User_page)}
-        </Box>
+          {SideNav}
+        </Drawer>
       </Box>
-    );
-  } else if (isreg === false) {
-    return <RegisterPage />;
-  }
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+        }}
+      >
+        <Toolbar />
+        {Content(User_page)}
+      </Box>
+    </Box>
+  );
 }

@@ -32,6 +32,23 @@ const NavbarPage = () => {
     return isContractOwnerAuth;
   };
 
+  const landInspectorLogin = async () => {
+    let landInspectorAddress = await signer.getAddress();
+
+    let isLandInspectorAuth = await contract.isLandInspector(
+      landInspectorAddress,
+    );
+    console.log(isLandInspectorAuth);
+    return isLandInspectorAuth;
+  };
+
+  const userLogin = async () => {
+    let userAddress = await signer.getAddress();
+
+    let isUserAuth = await contract.isUserRegistered(userAddress);
+    console.log(isUserAuth);
+    return isUserAuth;
+  };
   return (
     <Box sx={{ boxShadow: 4 }}>
       <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -62,7 +79,13 @@ const NavbarPage = () => {
                   cursor: "pointer",
                 },
               }}
-              onClick={() => navigate("/user")}
+              onClick={async () => {
+                if (await userLogin()) {
+                  navigate("/user");
+                } else {
+                  navigate("/user/registration");
+                }
+              }}
             >
               User
             </Typography>
@@ -74,8 +97,12 @@ const NavbarPage = () => {
                   cursor: "pointer",
                 },
               }}
-              onClick={() => {
-                navigate("/land_inspector");
+              onClick={async () => {
+                if (await landInspectorLogin()) {
+                  navigate("/land_inspector");
+                } else {
+                  alert("You are not a land inspector");
+                }
               }}
             >
               Land Inspector
@@ -150,13 +177,25 @@ const NavbarPage = () => {
             >
               <Typography
                 sx={{ fontSize: "17px" }}
-                onClick={() => navigate("/user")}
+                onClick={async () => {
+                  if (await userLogin()) {
+                    navigate("/user");
+                  } else {
+                    navigate("/user/registration");
+                  }
+                }}
               >
                 User
               </Typography>
               <Typography
                 sx={{ fontSize: "17px" }}
-                onClick={() => navigate("/land_inspector")}
+                onClick={async () => {
+                  if (await landInspectorLogin()) {
+                    navigate("/land_inspector");
+                  } else {
+                    alert("You are not a land inspector");
+                  }
+                }}
               >
                 Land Inspector
               </Typography>

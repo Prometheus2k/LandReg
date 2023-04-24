@@ -68,7 +68,9 @@ export default function ContractDashboard() {
             <ListItemIcon>
               <PersonIcon />
             </ListItemIcon>
-            <ListItemText>{address.slice(0, 15) + "....."}</ListItemText>
+            <ListItemText>
+              {address.slice(0, 5) + "....." + address.slice(-5)}
+            </ListItemText>
           </ListItemButton>
         </ListItem>
       </List>

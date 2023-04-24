@@ -6,6 +6,7 @@ import {
   useTheme,
   Typography,
   Stack,
+  Button,
 } from "@mui/material";
 import { LandState } from "context/landProvider";
 import { useEffect, useState } from "react";
@@ -19,7 +20,9 @@ const Dashboardpage = () => {
     LandState();
 
   const [values, setValues] = useState("");
-
+  const openInNewTab = (url) => {
+    window.open(url, "_blank", "noreferrer");
+  };
   useEffect(() => {
     const getUser = async () => {
       const account = await signer.getAddress();
@@ -42,18 +45,24 @@ const Dashboardpage = () => {
   return (
     <form>
       <Box sx={{ paddingBottom: 2 }}>
-        {values.isVerified && (
-          <Typography variant="h6" noWrap component="div" color="#43a047">
-            Verified
-            <VerifiedIcon sx={{ color: "#43a047" }} />
-          </Typography>
-        )}
-        {!values.isVerified && (
-          <Typography variant="h6" noWrap component="div" color="#ef5350">
-            Not Verified
-            <UnpublishedIcon sx={{ color: "#ef5350" }} />
-          </Typography>
-        )}
+        <Stack direction="row" spacing={6}>
+          {values.isVerified && (
+            <Typography variant="h6" noWrap component="div" color="#43a047">
+              Verified
+              <VerifiedIcon sx={{ color: "#43a047" }} />
+            </Typography>
+          )}
+          {!values.isVerified && (
+            <Typography variant="h6" noWrap component="div" color="#ef5350">
+              Not Verified
+              <UnpublishedIcon sx={{ color: "#ef5350" }} />
+            </Typography>
+          )}
+
+          <Button variant="text" onClick={() => openInNewTab(values.document)}>
+            View Document
+          </Button>
+        </Stack>
       </Box>
 
       <Box
@@ -78,7 +87,7 @@ const Dashboardpage = () => {
           required
           id="filled-required"
           label="Wallet Address"
-          value={values.id}
+          value={values._userAddress}
           defaultValue="wallet address"
           variant="filled"
           sx={{ gridColumn: "span 2" }}
@@ -110,7 +119,7 @@ const Dashboardpage = () => {
           variant="filled"
           sx={{ gridColumn: "span 2" }}
         />
-        <TextField
+        {/* <TextField
           required
           id="filled-required"
           label="Document"
@@ -118,7 +127,8 @@ const Dashboardpage = () => {
           defaultValue="document"
           variant="filled"
           sx={{ gridColumn: "span 2" }}
-        />
+        /> */}
+
         <TextField
           required
           id="filled-required"

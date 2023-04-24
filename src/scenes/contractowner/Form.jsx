@@ -40,7 +40,7 @@ const Form = () => {
     <Formik
       initialValues={initialValuesRegister}
       validationSchema={registerSchema}
-      onSubmit={async (values, { setSubmitting }) => {
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
         console.log(values);
         setSubmitting(false);
         let isLandInspectorAdded = await contract.addLandInspector(
@@ -50,6 +50,7 @@ const Form = () => {
           values.city,
         );
         console.log(isLandInspectorAdded);
+        resetForm();
       }}
     >
       {({
@@ -127,18 +128,6 @@ const Form = () => {
             >
               {"REGISTER"}
             </Button>
-            <Typography
-              sx={{
-                textDecoration: "underline",
-                color: palette.primary.main,
-                "&:hover": {
-                  cursor: "pointer",
-                  color: palette.primary.light,
-                },
-              }}
-            >
-              {"Already have an account? Login here."}
-            </Typography>
           </Box>
         </form>
       )}

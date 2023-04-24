@@ -20,7 +20,7 @@ const registerSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("required"),
   age: yup.string().required("required"),
   city: yup.string().required("required"),
-  document: yup.string().required("required"),
+  // document: yup.string().required("required"),
   aadharcardno: yup.string().required("required"),
   pancardno: yup.string().required("required"),
 });
@@ -31,7 +31,7 @@ const initialValuesRegister = {
   email: "",
   age: "",
   city: "",
-  document: "",
+  // document: "",
   aadharcardno: "",
   pancardno: "",
 };
@@ -72,14 +72,33 @@ const Form = () => {
   };
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  // };
 
   return (
     <Formik
       initialValues={initialValuesRegister}
       validationSchema={registerSchema}
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        console.log(values);
+        setSubmitting(false);
+        const docUrl = `https://gateway.pinata.cloud/ipfs/${myipfsHash}`;
+        console.log(docUrl);
+        const account = await signer.getAddress();
+        let res = await contract.registerNewUser(
+          values.firstName + values.lastName,
+          values.email,
+          values.age,
+          values.city,
+          values.aadharcardno,
+          values.pancardno,
+          docUrl,
+        );
+        console.log(res);
+        resetForm();
+        navigate("/user");
+      }}
     >
       {({
         values,
@@ -87,6 +106,7 @@ const Form = () => {
         touched,
         handleBlur,
         handleChange,
+        handleSubmit,
         setFieldValue,
       }) => (
         <form onSubmit={handleSubmit}>
@@ -180,31 +200,14 @@ const Form = () => {
               onChange={handleChange}
               value={values.pancardno}
               name="pancardno"
-              error={Boolean(touched.aadharcardno) && Boolean(errors.pancardno)}
-              helperText={touched.aadharcardno && errors.pancardno}
+              error={Boolean(touched.pancardno) && Boolean(errors.pancardno)}
+              helperText={touched.pancardno && errors.pancardno}
               sx={{ gridColumn: "span 4" }}
             />
           </Box>
 
           <Box>
             <Button
-              onClick={async () => {
-                console.log(values);
-                const docUrl = `https://gateway.pinata.cloud/ipfs/${myipfsHash}`;
-                console.log(docUrl);
-                const account = await signer.getAddress();
-                let res = await contract.registerNewUser(
-                  values.firstName + values.lastName,
-                  values.email,
-                  values.age,
-                  values.city,
-                  values.aadharcardno,
-                  values.pancardno,
-                  docUrl,
-                );
-                console.log(res);
-                navigate("/user");
-              }}
               fullWidth
               type="submit"
               sx={{

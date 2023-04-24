@@ -34,13 +34,33 @@ const drawerWidth = 240;
 
 export default function LandInspectorDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [name, setName] = useState("");
+
   // const [page, setpage] = useState(0);
   const navigate = useNavigate();
-  const { LI_page, setLIPage } = LandState();
+  const {
+    provider,
+    setProvider,
+    signer,
+    setSigner,
+    contract,
+    setContract,
+    CO_page,
+    setCOPage,
+    LI_page,
+    setLIPage,
+  } = LandState();
   useEffect(() => {
+    const getLIAddress = async () => {
+      const address = await signer.getAddress();
+      const res = await contract.returnLandInspector(address);
+      console.log(res.name);
+      setName(res.name);
+    };
+
+    getLIAddress();
     setLIPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [contract, setLIPage, signer]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -56,7 +76,7 @@ export default function LandInspectorDashboard() {
             <ListItemIcon>
               <PersonIcon />
             </ListItemIcon>
-            <ListItemText>Stan Lee</ListItemText>
+            <ListItemText>{name}</ListItemText>
           </ListItemButton>
         </ListItem>
       </List>

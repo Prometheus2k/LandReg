@@ -32,11 +32,12 @@ const FormCO = () => {
     <Formik
       initialValues={initialValuesRegister}
       validationSchema={registerSchema}
-      onSubmit={async (values, { setSubmitting }) => {
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
         console.log(values);
         setSubmitting(false);
         let res = await contract.changeContractOwner(values.publicKey);
         console.log(res);
+        resetForm();
         navigate("/");
       }}
     >
@@ -48,6 +49,7 @@ const FormCO = () => {
         handleChange,
         handleSubmit,
         setFieldValue,
+        resetForm,
       }) => (
         <form onSubmit={handleSubmit}>
           <Box

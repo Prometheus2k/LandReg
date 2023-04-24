@@ -1,8 +1,39 @@
 import { Card, CardContent, List, Typography } from "@mui/material";
 import { LandState } from "context/landProvider";
+import { useEffect, useState } from "react";
 
 const Dashboardpage = () => {
-  const { setLIPage } = LandState();
+  const {
+    provider,
+    setProvider,
+    signer,
+    setSigner,
+    contract,
+    setContract,
+    CO_page,
+    setCOPage,
+    LI_page,
+    setLIPage,
+  } = LandState();
+  const [count, setCount] = useState({
+    users: 0,
+    lands: 0,
+    transfers: 0,
+  });
+  useEffect(() => {
+    const getCount = async () => {
+      const users = await contract.userCount();
+      const lands = await contract.LandCount();
+      const transfers = await contract.transferRequestCount();
+      setCount({
+        users,
+        lands,
+        transfers,
+      });
+      console.log(users, lands, transfers);
+    };
+    getCount();
+  }, [contract]);
   return (
     <List sx={{ display: "flex" }}>
       <Card
@@ -17,8 +48,10 @@ const Dashboardpage = () => {
         }}
       >
         <CardContent>
-          <Typography>Verify user requests</Typography>
-          <Typography sx={{ fontSize: "40px" }}>1</Typography>
+          <Typography>Total Users Registered</Typography>
+          <Typography sx={{ fontSize: "40px" }}>
+            {count.users.toString()}
+          </Typography>
         </CardContent>
       </Card>
       <Card
@@ -33,8 +66,10 @@ const Dashboardpage = () => {
         }}
       >
         <CardContent>
-          <Typography>Verify land requests</Typography>
-          <Typography sx={{ fontSize: "40px" }}>1</Typography>
+          <Typography>Total Property Registered</Typography>
+          <Typography sx={{ fontSize: "40px" }}>
+            {count.lands.toString()}
+          </Typography>
         </CardContent>
       </Card>
       <Card
@@ -49,8 +84,10 @@ const Dashboardpage = () => {
         }}
       >
         <CardContent>
-          <Typography>Total Land Transfers</Typography>
-          <Typography sx={{ fontSize: "40px" }}>1</Typography>
+          <Typography>Total Property Transfered</Typography>
+          <Typography sx={{ fontSize: "40px" }}>
+            {count.transfers.toString()}
+          </Typography>
         </CardContent>
       </Card>
     </List>
