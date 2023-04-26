@@ -12,31 +12,54 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
+import axios from "axios";
+import { useState } from "react";
+import { LandState } from "context/landProvider";
 
 const registerSchema = yup.object().shape({
-  firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  age: yup.string().required("required"),
-  city: yup.string().required("required"),
-  document: yup.string().required("required"),
-  aadharcardno: yup.string().required("required"),
-  pancardno: yup.string().required("required"),
+  area: yup.string().required("required"),
+  survey: yup.string().required("required"),
+  address: yup.string().required("required"),
+  picture: yup.string().required("required"),
 });
 
 const initialValuesRegister = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  age: "",
-  city: "",
-  document: "",
-  aadharcardno: "",
-  pancardno: "",
+  area: "",
+  survey: "",
+  address: "",
+  picture: "",
 };
 
 const Form = () => {
   const { palette } = useTheme();
+  const [myipfsHash, setIPFSHASH] = useState("");
+  const { provider, setProvider, signer, setSigner, contract, setContract } =
+    LandState();
+
+  const handleFile = async (fileToHandle) => {
+    console.log("starting");
+    const formData = new FormData();
+    formData.append("file", fileToHandle);
+
+    // call the keys from .env
+
+    const API_KEY = "a60dc487cef5582e63e3";
+    const API_SECRET =
+      "6c027de60d679ac4d05fe6d7963fcb885f0b10b893ca943e6725f2d64cbcaadc";
+
+    const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+
+    const response = await axios.post(url, formData, {
+      maxContentLength: "Infinity",
+      headers: {
+        "Content-Type": `multipart/form-data;boundary=${formData._boundary}`,
+        pinata_api_key: API_KEY,
+        pinata_secret_api_key: API_SECRET,
+      },
+    });
+    setIPFSHASH(response.data.IpfsHash);
+    console.log(myipfsHash);
+  };
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
@@ -44,6 +67,21 @@ const Form = () => {
     <Formik
       initialValues={initialValuesRegister}
       validationSchema={registerSchema}
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        console.log(values);
+        setSubmitting(false);
+        const docUrl = `https://gateway.pinata.cloud/ipfs/${myipfsHash}`;
+        console.log(docUrl);
+        const account = await signer.getAddress();
+        let res = await contract.addLand(
+          values.area,
+          values.address,
+          values.survey,
+          docUrl,
+        );
+        console.log(res);
+        resetForm();
+      }}
     >
       {({
         values,
@@ -52,8 +90,9 @@ const Form = () => {
         handleBlur,
         handleChange,
         setFieldValue,
+        handleSubmit,
       }) => (
-        <form>
+        <form onSubmit={handleSubmit}>
           <Box
             display="grid"
             gap="30px"
@@ -101,9 +140,12 @@ const Form = () => {
               <Dropzone
                 acceptedFiles=".jpg,.jpeg,.png"
                 multiple={false}
-                onDrop={(acceptedFiles) =>
-                  setFieldValue("picture", acceptedFiles[0])
-                }
+                onDrop={(acceptedFiles) => {
+                  setFieldValue("picture", acceptedFiles[0]);
+                  // setFile(acceptedFiles[0]);
+                  handleFile(acceptedFiles[0]);
+                  // console.log(values);
+                }}
               >
                 {({ getRootProps, getInputProps }) => (
                   <Box
@@ -113,6 +155,7 @@ const Form = () => {
                     sx={{ "&:hover": { cursor: "pointer" } }}
                   >
                     <input {...getInputProps()} />
+                    {/* {console.log(values.picture)} */}
                     {!values.picture ? (
                       <p>Add Your Document Here</p>
                     ) : (
