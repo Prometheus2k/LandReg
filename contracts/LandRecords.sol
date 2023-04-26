@@ -284,6 +284,24 @@ contract LandRecords {
         return usersLands[id];
     }
 
+    function myAllLandsDetails(address id) public view returns (Land[] memory) {
+        uint len = usersLands[id].length;
+        Land[] memory myLands = new Land[](len);
+        for (uint i = 0; i < len; i++) {
+            myLands[i] = lands[usersLands[id][i]];
+        }
+        return myLands;
+    }
+
+    function returnAllLands() public view returns (Land[] memory) {
+        uint len = allLandList[1].length;
+        Land[] memory allLands = new Land[](len);
+        for (uint i = 0; i < len; i++) {
+            allLands[i] = lands[allLandList[1][i]];
+        }
+        return allLands;
+    }
+
     function makeItforSell(uint id) public {
         require(lands[id].landOwner == msg.sender);
         lands[id].isForSell = true;
