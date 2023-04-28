@@ -11,8 +11,7 @@ import { LandState } from "context/landProvider";
 import { useEffect } from "react";
 
 const AllLIpage = () => {
-  const { provider, setProvider, signer, setSigner, contract, setContract } =
-    LandState();
+  const { contract } = LandState();
 
   const [rows, setRows] = React.useState([]);
 
@@ -38,7 +37,10 @@ const AllLIpage = () => {
             <TableCell>ID</TableCell>
             <TableCell align="center">Public Key</TableCell>
             <TableCell align="center">Name</TableCell>
+            <TableCell align="center">Age</TableCell>
+            <TableCell align="center">Designation</TableCell>
             <TableCell align="center">City</TableCell>
+
             <TableCell align="center">Remove</TableCell>
           </TableRow>
         </TableHead>
@@ -54,6 +56,8 @@ const AllLIpage = () => {
                 </TableCell>
                 <TableCell align="center">{row._inspectorAddress}</TableCell>
                 <TableCell align="center">{row.name}</TableCell>
+                <TableCell align="center">{row.age + ""}</TableCell>
+                <TableCell align="center">{row.designation}</TableCell>
                 <TableCell align="center">{row.city}</TableCell>
                 <TableCell align="center">
                   <Button

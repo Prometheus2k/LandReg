@@ -5,6 +5,11 @@ import {
   useMediaQuery,
   Typography,
   useTheme,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
 } from "@mui/material";
 
 import { Formik } from "formik";
@@ -40,10 +45,26 @@ const Form = () => {
   const { palette } = useTheme();
   const [file, setFile] = useState();
   const [myipfsHash, setIPFSHASH] = useState("");
-  const { provider, setProvider, signer, setSigner, contract, setContract } =
-    LandState();
+  const { contract } = LandState();
 
   const navigate = useNavigate();
+
+  const cities = [
+    "Kasaragod",
+    "Kannur",
+    "Wayanad",
+    "Kozhikode",
+    "Malappuram",
+    "Palakkad",
+    "Thrissur",
+    "Ernakulam",
+    "Idukki",
+    "Kottayam",
+    "Alappuzha",
+    "Pathanamthitta",
+    "Kollam",
+    "Thiruvananthapuram",
+  ];
 
   const handleFile = async (fileToHandle) => {
     console.log("starting");
@@ -85,9 +106,8 @@ const Form = () => {
         setSubmitting(false);
         const docUrl = `https://gateway.pinata.cloud/ipfs/${myipfsHash}`;
         console.log(docUrl);
-        const account = await signer.getAddress();
         let res = await contract.registerNewUser(
-          values.firstName + values.lastName,
+          values.firstName + " " + values.lastName,
           values.email,
           values.age,
           values.city,
@@ -107,7 +127,6 @@ const Form = () => {
         handleBlur,
         handleChange,
         handleSubmit,
-        setFieldValue,
       }) => (
         <form onSubmit={handleSubmit}>
           <Box
@@ -149,16 +168,25 @@ const Form = () => {
               helperText={touched.age && errors.age}
               sx={{ gridColumn: "span 2" }}
             />
-            <TextField
-              label="City"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.city}
-              name="city"
-              error={Boolean(touched.city) && Boolean(errors.city)}
-              helperText={touched.city && errors.city}
-              sx={{ gridColumn: "span 2" }}
-            />
+            <FormControl variant="outlined" style={{ gridColumn: "span 2" }}>
+              <InputLabel shrink>City</InputLabel>
+              <Select
+                label="City"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.city}
+                name="city"
+                error={Boolean(touched.city) && Boolean(errors.city)}
+                helperText={touched.city && errors.city}
+                sx={{ gridColumn: "span 2" }}
+                MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
+              >
+                {cities.map((city) => (
+                  <MenuItem value={city}>{city}</MenuItem>
+                ))}
+              </Select>
+              <FormHelperText>Select a City</FormHelperText>
+            </FormControl>
             <Box
               gridColumn="span 4"
               border={`1px solid ${palette.neutral.medium}`}

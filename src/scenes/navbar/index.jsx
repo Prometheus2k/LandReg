@@ -20,31 +20,25 @@ const NavbarPage = () => {
   const background = theme.palette.background.default;
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
-  const { provider, setProvider, signer, setSigner, contract, setContract } =
-    LandState();
+  const { signer, contract } = LandState();
   const contractOwnerLogin = async () => {
     let contractOwnerAddress = await signer.getAddress();
-    // console.log(contractOwnerAddress);
     let isContractOwnerAuth = await contract.isContractOwner(
       contractOwnerAddress,
     );
-    // console.log(isContractOwnerAuth);
     return isContractOwnerAuth;
   };
 
   const landInspectorLogin = async () => {
     let landInspectorAddress = await signer.getAddress();
-
     let isLandInspectorAuth = await contract.isLandInspector(
       landInspectorAddress,
     );
-    console.log(isLandInspectorAuth);
     return isLandInspectorAuth;
   };
 
   const userLogin = async () => {
     let userAddress = await signer.getAddress();
-
     let isUserAuth = await contract.isUserRegistered(userAddress);
     console.log(isUserAuth);
     return isUserAuth;

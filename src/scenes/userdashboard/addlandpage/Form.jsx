@@ -17,30 +17,34 @@ import { useState } from "react";
 import { LandState } from "context/landProvider";
 
 const registerSchema = yup.object().shape({
-  area: yup.string().required("required"),
-  survey: yup.string().required("required"),
+  area: yup.number().required("required"),
   address: yup.string().required("required"),
-  picture: yup.string().required("required"),
+  landPrice: yup.string().required("required"),
+  allLatitudeLongitude: yup.string().required("required"),
+  propertyPID: yup.string().required("required"),
+  survey: yup.string().required("required"),
+  files: yup.mixed().required("required"),
 });
 
 const initialValuesRegister = {
   area: "",
-  survey: "",
   address: "",
-  picture: "",
+  landPrice: "",
+  allLatitudeLongitude: "",
+  propertyPID: "",
+  survey: "",
+  files: null,
 };
 
 const Form = () => {
   const { palette } = useTheme();
-  const [myipfsHash, setIPFSHASH] = useState("");
-  const { provider, setProvider, signer, setSigner, contract, setContract } =
-    LandState();
+  const [myipfsHash, setIPFSHASH] = useState([]);
+  const { contract } = LandState();
 
   const handleFile = async (fileToHandle) => {
     console.log("starting");
     const formData = new FormData();
     formData.append("file", fileToHandle);
-
     // call the keys from .env
 
     const API_KEY = "a60dc487cef5582e63e3";
@@ -57,7 +61,7 @@ const Form = () => {
         pinata_secret_api_key: API_SECRET,
       },
     });
-    setIPFSHASH(response.data.IpfsHash);
+    setIPFSHASH((myipfsHash) => [...myipfsHash, response.data.IpfsHash]);
     console.log(myipfsHash);
   };
 
@@ -69,15 +73,21 @@ const Form = () => {
       validationSchema={registerSchema}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         console.log(values);
+
         setSubmitting(false);
-        const docUrl = `https://gateway.pinata.cloud/ipfs/${myipfsHash}`;
+        const docUrl = `https://gateway.pinata.cloud/ipfs/${myipfsHash[0]}`;
+        const picUrl = `https://gateway.pinata.cloud/ipfs/${myipfsHash[1]}`;
         console.log(docUrl);
-        const account = await signer.getAddress();
+        console.log(picUrl);
         let res = await contract.addLand(
           values.area,
           values.address,
+          values.landPrice,
+          values.allLatitudeLongitude,
+          values.propertyPID,
           values.survey,
           docUrl,
+          picUrl,
         );
         console.log(res);
         resetForm();
@@ -112,13 +122,13 @@ const Form = () => {
               sx={{ gridColumn: "span 2" }}
             />
             <TextField
-              label="Survey No."
+              label="landPrice"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.survey}
-              name="survey"
-              error={Boolean(touched.survey) && Boolean(errors.survey)}
-              helperText={touched.survey && errors.survey}
+              value={values.landPrice}
+              name="landPrice"
+              error={Boolean(touched.landPrice) && Boolean(errors.landPrice)}
+              helperText={touched.landPrice && errors.landPrice}
               sx={{ gridColumn: "span 2" }}
             />
             <TextField
@@ -131,6 +141,44 @@ const Form = () => {
               helperText={touched.address && errors.address}
               sx={{ gridColumn: "span 4" }}
             />
+            <TextField
+              label="PID No."
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.propertyPID}
+              name="propertyPID"
+              error={
+                Boolean(touched.propertyPID) && Boolean(errors.propertyPID)
+              }
+              helperText={touched.propertyPID && errors.propertyPID}
+              sx={{ gridColumn: "span 2" }}
+            />
+            <TextField
+              label="Survey No."
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.survey}
+              name="survey"
+              error={Boolean(touched.survey) && Boolean(errors.survey)}
+              helperText={touched.survey && errors.survey}
+              sx={{ gridColumn: "span 2" }}
+            />
+            <TextField
+              label="latitude,longitude"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.allLatitudeLongitude}
+              name="allLatitudeLongitude"
+              error={
+                Boolean(touched.allLatitudeLongitude) &&
+                Boolean(errors.allLatitudeLongitude)
+              }
+              helperText={
+                touched.allLatitudeLongitude && errors.allLatitudeLongitude
+              }
+              sx={{ gridColumn: "span 4" }}
+            />
+
             <Box
               gridColumn="span 4"
               border={`1px solid ${palette.neutral.medium}`}
@@ -139,12 +187,10 @@ const Form = () => {
             >
               <Dropzone
                 acceptedFiles=".jpg,.jpeg,.png"
-                multiple={false}
+                multiple={true}
                 onDrop={(acceptedFiles) => {
-                  setFieldValue("picture", acceptedFiles[0]);
-                  // setFile(acceptedFiles[0]);
-                  handleFile(acceptedFiles[0]);
-                  // console.log(values);
+                  setFieldValue("files", acceptedFiles);
+                  acceptedFiles.map((file) => handleFile(file));
                 }}
               >
                 {({ getRootProps, getInputProps }) => (
@@ -155,12 +201,17 @@ const Form = () => {
                     sx={{ "&:hover": { cursor: "pointer" } }}
                   >
                     <input {...getInputProps()} />
-                    {/* {console.log(values.picture)} */}
-                    {!values.picture ? (
-                      <p>Add Your Document Here</p>
+                    {!values.files ? (
+                      <p>Drop you files here</p>
                     ) : (
                       <FlexBetween>
-                        <Typography>{values.picture.name}</Typography>
+                        <Typography>
+                          {values.files.map((file) => (
+                            <>
+                              {file.name} <br />
+                            </>
+                          ))}
+                        </Typography>
                         <EditOutlinedIcon />
                       </FlexBetween>
                     )}

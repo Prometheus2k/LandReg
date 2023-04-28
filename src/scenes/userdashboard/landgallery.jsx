@@ -36,6 +36,14 @@ const LandGallerypage = () => {
     fetchMyLands();
   }, [contract, signer]);
 
+  const buyLand = async (id) => {
+    console.log(id);
+    const check = await contract.buyRequestStatus(id);
+    console.log(check);
+    const res = await contract.requestforBuy(id);
+    console.log(res);
+  };
+
   return (
     <>
       <CssBaseline />
@@ -52,7 +60,8 @@ const LandGallerypage = () => {
               myLands.map(
                 (land) =>
                   land.landOwner !== account &&
-                  land.isLandVerified && (
+                  land.isLandVerified &&
+                  land.isForSell && (
                     <Grid item xs={4}>
                       <Card sx={{ maxWidth: 345 }}>
                         <CardMedia
@@ -81,7 +90,7 @@ const LandGallerypage = () => {
                               View Doc
                             </Button>
                             <Button
-                              onClick={() => {}}
+                              onClick={() => buyLand(land.id)}
                               color="info"
                               variant="contained"
                             >

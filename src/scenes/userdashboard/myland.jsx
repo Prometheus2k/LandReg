@@ -24,6 +24,12 @@ const MyLandpage = () => {
   const openInNewTab = (url) => {
     window.open(url, "_blank", "noreferrer");
   };
+
+  const sellLand = async (id) => {
+    console.log(id);
+    const res = await contract.makeItforSell(id);
+    console.log(res);
+  };
   useEffect(() => {
     const fetchMyLands = async () => {
       const account = await signer.getAddress();
@@ -52,7 +58,7 @@ const MyLandpage = () => {
                   <Card sx={{ maxWidth: 345 }}>
                     <CardMedia
                       sx={{ height: 140 }}
-                      image={land.landDocument}
+                      image={land.landPicture}
                       title="ground"
                     />
                     <CardContent>
@@ -86,7 +92,7 @@ const MyLandpage = () => {
                         {land.landAddress}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {land.surveyNumber}
+                        {"Price : " + land.landPrice}
                       </Typography>
                     </CardContent>
                     <CardActions>
@@ -97,22 +103,23 @@ const MyLandpage = () => {
                         >
                           View Doc
                         </Button>
-                        {land.isLandVerified && (
+                        {land.isForSell && (
+                          <Button color="success" variant="contained">
+                            Waiting for Buyer
+                          </Button>
+                        )}
+                        {land.isLandVerified && !land.isForSell && (
                           <Button
-                            onClick={() => {}}
-                            color="success"
+                            onClick={() => sellLand(land.id)}
+                            color="error"
                             variant="contained"
                           >
-                            Sell
+                            Make it for Sell
                           </Button>
                         )}
                         {!land.isLandVerified && (
-                          <Button
-                            onClick={() => {}}
-                            variant="contained"
-                            disabled
-                          >
-                            Sell
+                          <Button variant="contained" disabled>
+                            Make it for Sell
                           </Button>
                         )}
                       </Stack>

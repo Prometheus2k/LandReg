@@ -14,23 +14,14 @@ import { useEffect } from "react";
 
 const VerifyUser = () => {
   const [rows, setRows] = React.useState([]);
-  const {
-    provider,
-    setProvider,
-    signer,
-    setSigner,
-    contract,
-    setContract,
-    CO_page,
-    setCOPage,
-    LI_page,
-    setLIPage,
-  } = LandState();
+  const { contract, signer } = LandState();
   useEffect(() => {
     const userList = async () => {
-      const res = await contract.ReturnAllUserDetails();
-      console.log(res);
+      const address = await signer.getAddress();
+      const landInspector = await contract.returnLandInspector(address);
+      const res = await contract.ReturnAllUserDetails(landInspector.city);
       setRows(res);
+      console.log(res);
     };
     userList();
   }, []);
@@ -62,45 +53,48 @@ const VerifyUser = () => {
         </TableHead>
         <TableBody>
           {rows.length > 0 &&
-            rows.map((row) => (
-              <TableRow
-                key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.id + ""}
-                </TableCell>
-                <TableCell align="center">{row._userAddress}</TableCell>
-                <TableCell align="center">{row.name}</TableCell>
-                <TableCell align="center">{row.city}</TableCell>
-                <TableCell align="center">{row.aadharCard}</TableCell>
-
-                <TableCell align="center">{row.panCard}</TableCell>
-                <TableCell align="center">
-                  <Button
-                    variant="text"
-                    onClick={() => openInNewTab(row.document)}
+            rows.map(
+              (row) =>
+                row.document !== "" && (
+                  <TableRow
+                    key={row.name}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
-                    View Document
-                  </Button>
-                </TableCell>
-                <TableCell align="center">
-                  {row.isVerified && (
-                    <Button variant="contained" disabled>
-                      verified
-                    </Button>
-                  )}
-                  {!row.isVerified && (
-                    <Button
-                      variant="contained"
-                      onClick={() => userVerify(row._userAddress)}
-                    >
-                      verify
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                    <TableCell component="th" scope="row">
+                      {row.id + ""}
+                    </TableCell>
+                    <TableCell align="center">{row._userAddress}</TableCell>
+                    <TableCell align="center">{row.name}</TableCell>
+                    <TableCell align="center">{row.city}</TableCell>
+                    <TableCell align="center">{row.aadharCard}</TableCell>
+
+                    <TableCell align="center">{row.panCard}</TableCell>
+                    <TableCell align="center">
+                      <Button
+                        variant="text"
+                        onClick={() => openInNewTab(row.document)}
+                      >
+                        View Document
+                      </Button>
+                    </TableCell>
+                    <TableCell align="center">
+                      {row.isVerified && (
+                        <Button variant="contained" disabled>
+                          verified
+                        </Button>
+                      )}
+                      {!row.isVerified && (
+                        <Button
+                          variant="contained"
+                          onClick={() => userVerify(row._userAddress)}
+                        >
+                          verify
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ),
+            )}
         </TableBody>
       </Table>
     </TableContainer>

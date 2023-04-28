@@ -70,9 +70,11 @@ const VerifyLandPage = () => {
             <TableCell>ID</TableCell>
             <TableCell align="center">Owner&nbsp;Address</TableCell>
             <TableCell align="center">Area</TableCell>
+            <TableCell align="center">Land Price</TableCell>
             <TableCell align="center">Survey&nbsp;No.</TableCell>
             <TableCell align="center">Land Address</TableCell>
             <TableCell align="center">Document</TableCell>
+            <TableCell align="center">Picture</TableCell>
             <TableCell align="center">Verify</TableCell>
           </TableRow>
         </TableHead>
@@ -88,6 +90,7 @@ const VerifyLandPage = () => {
                 </TableCell>
                 <TableCell align="center">{row.landOwner}</TableCell>
                 <TableCell align="center">{row.landArea + ""}</TableCell>
+                <TableCell align="center">{row.landPrice + ""}</TableCell>
                 <TableCell align="center">{row.surveyNumber}</TableCell>
                 <TableCell align="center">{row.landAddress}</TableCell>
                 <TableCell align="center">
@@ -96,6 +99,14 @@ const VerifyLandPage = () => {
                     onClick={() => openInNewTab(row.landDocument)}
                   >
                     View Document
+                  </Button>
+                </TableCell>
+                <TableCell align="center">
+                  <Button
+                    variant="text"
+                    onClick={() => openInNewTab(row.landPicture)}
+                  >
+                    View Picture
                   </Button>
                 </TableCell>
                 <TableCell align="center">

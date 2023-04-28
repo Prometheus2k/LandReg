@@ -38,18 +38,7 @@ export default function LandInspectorDashboard() {
 
   // const [page, setpage] = useState(0);
   const navigate = useNavigate();
-  const {
-    provider,
-    setProvider,
-    signer,
-    setSigner,
-    contract,
-    setContract,
-    CO_page,
-    setCOPage,
-    LI_page,
-    setLIPage,
-  } = LandState();
+  const { signer, contract, LI_page, setLIPage } = LandState();
   useEffect(() => {
     const getLIAddress = async () => {
       const address = await signer.getAddress();

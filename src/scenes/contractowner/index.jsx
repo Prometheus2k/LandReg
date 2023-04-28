@@ -34,16 +34,7 @@ export default function ContractDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [address, setAddress] = useState("");
   const navigate = useNavigate();
-  const {
-    provider,
-    setProvider,
-    signer,
-    setSigner,
-    contract,
-    setContract,
-    CO_page,
-    setCOPage,
-  } = LandState();
+  const { signer, CO_page, setCOPage } = LandState();
 
   useEffect(() => {
     const getCOAddress = async () => {
@@ -68,8 +59,8 @@ export default function ContractDashboard() {
             <ListItemIcon>
               <PersonIcon />
             </ListItemIcon>
-            <ListItemText>
-              {address.slice(0, 5) + "....." + address.slice(-5)}
+            <ListItemText primaryTypographyProps={{ fontWeight: "bold" }}>
+              {address.slice(0, 6) + "....." + address.slice(-6)}
             </ListItemText>
           </ListItemButton>
         </ListItem>
