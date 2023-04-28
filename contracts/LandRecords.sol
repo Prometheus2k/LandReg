@@ -11,13 +11,17 @@ contract LandRecords {
 
     struct Land {
         uint id;
-        address landOwner;
         uint landArea;
         string landAddress;
+        uint landPrice;
+        string allLatitudeLongitude;
+        uint propertyPID;
         string surveyNumber;
         string landDocument;
-        bool isLandVerified;
+        string landPicture;
         bool isForSell;
+        address payable landOwner;
+        bool isLandVerified;
     }
 
     struct user {
@@ -38,6 +42,7 @@ contract LandRecords {
         address _inspectorAddress;
         string name;
         uint age;
+        string designation;
         string city;
     }
 
@@ -118,6 +123,7 @@ contract LandRecords {
         address _address,
         string memory _name,
         uint _age,
+        string memory _designation,
         string memory _city
     ) public returns (bool) {
         if (contractOwner != msg.sender) return false;
@@ -130,13 +136,10 @@ contract LandRecords {
             _address,
             _name,
             _age,
+            _designation,
             _city
         );
         return true;
-    }
-
-    function returnAllLandInspectors() public view returns (address[] memory) {
-        return allLandInspectorList[1];
     }
 
     function returnLandInspector(
@@ -227,19 +230,23 @@ contract LandRecords {
         return addressToUser[id].isVerified;
     }
 
-    function ReturnAllUserList() public view returns (address[] memory) {
-        return allUsersList[1];
-    }
-
     function ReturnUser(address id) public view returns (user memory) {
         return addressToUser[id];
     }
 
-    function ReturnAllUserDetails() public view returns (user[] memory) {
+    function ReturnAllUserDetails(
+        string memory city
+    ) public view returns (user[] memory) {
         uint len = allUsersList[1].length;
         user[] memory allUsers = new user[](len);
         for (uint i = 0; i < len; i++) {
-            allUsers[i] = addressToUser[allUsersList[1][i]];
+            if (
+                keccak256(
+                    abi.encodePacked(addressToUser[allUsersList[1][i]].city)
+                ) == keccak256(abi.encodePacked(city))
+            ) {
+                allUsers[i] = addressToUser[allUsersList[1][i]];
+            }
         }
         return allUsers;
     }
@@ -247,19 +254,27 @@ contract LandRecords {
     function addLand(
         uint _area,
         string memory _address,
+        uint _landPrice,
+        string memory _allLatitudeLongitude,
+        uint _propertyPID,
         string memory _surveyNum,
-        string memory _document
+        string memory _document,
+        string memory _picture
     ) public {
         require(isUserVerified(msg.sender));
         totalLandsCount++;
         lands[totalLandsCount] = Land(
             totalLandsCount,
-            msg.sender,
             _area,
             _address,
+            _landPrice,
+            _allLatitudeLongitude,
+            _propertyPID,
             _surveyNum,
             _document,
+            _picture,
             false,
+            payable(msg.sender),
             false
         );
         usersLands[msg.sender].push(totalLandsCount);
@@ -390,9 +405,9 @@ contract LandRecords {
         }
         lands[TransferRequest[_requestId].landId].landDocument = documentUrl;
         lands[TransferRequest[_requestId].landId].isForSell = false;
-        lands[TransferRequest[_requestId].landId].landOwner = TransferRequest[
-            _requestId
-        ].buyerId;
+        lands[TransferRequest[_requestId].landId].landOwner = payable(
+            TransferRequest[_requestId].buyerId
+        );
         return true;
     }
 }
