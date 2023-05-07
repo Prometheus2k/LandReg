@@ -46,31 +46,28 @@ contract LandRecords {
         string city;
     }
 
-    struct landBuyRequest {
+    struct LandRequest {
+        uint reqId;
+        address payable sellerId;
+        address payable buyerId;
         uint landId;
-        address buyerId;
-        address sellerId;
         reqStatus requestStatus;
+        bool isPaymentDone;
     }
-
-    struct landTransferRequest {
-        uint landId;
-        address sellerId;
-        address buyerId;
-        reqStatus requestStatus;
-    }
-
     enum reqStatus {
-        pending,
+        notstarted,
+        requested,
         accepted,
-        rejected
+        rejected,
+        paymentdone,
+        completed
     }
 
     uint totalInspectors;
-    uint totalUsersCount;
-    uint totalLandsCount;
+    uint public totalUsersCount;
+    uint public totalLandsCount;
+    uint public transferCount;
     uint totalRequestCount;
-    uint transferCount;
 
     mapping(address => landInspector) public addressToInspector;
     mapping(uint => address[]) allLandInspectorList;
@@ -81,32 +78,11 @@ contract LandRecords {
     mapping(address => bool) RegisteredUser;
     mapping(address => uint[]) usersLands;
     mapping(uint => Land) public lands;
-    mapping(uint => landTransferRequest) public TransferRequest;
-    mapping(uint => landBuyRequest) public BuyRequest;
+    mapping(uint => LandRequest) public landRequest;
     mapping(address => uint[]) MyReceivedLandRequest;
     mapping(address => uint[]) MySentLandRequest;
     mapping(uint => uint[]) allLandList;
-    mapping(uint => uint[]) allTransferRequest;
-
-    function InspectorCount() public view returns (uint) {
-        return totalInspectors;
-    }
-
-    function LandCount() public view returns (uint) {
-        return totalLandsCount;
-    }
-
-    function userCount() public view returns (uint) {
-        return totalUsersCount;
-    }
-
-    function buyRequestCount() public view returns (uint) {
-        return totalRequestCount;
-    }
-
-    function transferRequestCount() public view returns (uint) {
-        return transferCount;
-    }
+    mapping(uint => uint[]) paymentDoneList;
 
     function isContractOwner(address _address) public view returns (bool) {
         if (_address == contractOwner) return true;
@@ -282,10 +258,6 @@ contract LandRecords {
         // emit AddingLand(landsCount);
     }
 
-    function ReturnAllLandList() public view returns (uint[] memory) {
-        return allLandList[1];
-    }
-
     function verifyLand(uint _id) public {
         require(isLandInspector(msg.sender));
         lands[_id].isLandVerified = true;
@@ -330,52 +302,87 @@ contract LandRecords {
     function requestforBuy(uint _landId) public {
         require(isUserVerified(msg.sender) && isLandVerified(_landId));
         totalRequestCount++;
-        BuyRequest[totalRequestCount] = landBuyRequest(
+        landRequest[totalRequestCount] = LandRequest(
             totalRequestCount,
-            msg.sender,
             lands[_landId].landOwner,
-            reqStatus.pending
+            payable(msg.sender),
+            _landId,
+            reqStatus.requested,
+            false
         );
         MyReceivedLandRequest[lands[_landId].landOwner].push(totalRequestCount);
         MySentLandRequest[msg.sender].push(totalRequestCount);
     }
 
-    function myReceivedLandRequests() public view returns (uint[] memory) {
-        return MyReceivedLandRequest[msg.sender];
+    function requestStatus(uint id) public view returns (reqStatus) {
+        return landRequest[id].requestStatus;
     }
 
-    function mySentLandRequests() public view returns (uint[] memory) {
-        return MySentLandRequest[msg.sender];
+    function myReceivedLandRequestsDetails()
+        public
+        view
+        returns (LandRequest[] memory)
+    {
+        uint len = MyReceivedLandRequest[msg.sender].length;
+        LandRequest[] memory receivedLandRequests = new LandRequest[](len);
+        for (uint i = 0; i < len; i++) {
+            receivedLandRequests[i] = landRequest[
+                MyReceivedLandRequest[msg.sender][i]
+            ];
+        }
+        return receivedLandRequests;
+    }
+
+    function mySentLandRequestsDetails()
+        public
+        view
+        returns (LandRequest[] memory)
+    {
+        uint len = MySentLandRequest[msg.sender].length;
+        LandRequest[] memory sentLandRequests = new LandRequest[](len);
+        for (uint i = 0; i < len; i++) {
+            sentLandRequests[i] = landRequest[MySentLandRequest[msg.sender][i]];
+        }
+        return sentLandRequests;
+    }
+
+    function allLandRequestsDetails()
+        public
+        view
+        returns (LandRequest[] memory)
+    {
+        uint len = totalRequestCount;
+        LandRequest[] memory allLandRequests = new LandRequest[](len);
+        for (uint i = 0; i < len; i++) {
+            allLandRequests[i] = landRequest[i + 1];
+        }
+        return allLandRequests;
     }
 
     function acceptRequest(uint _requestId) public {
-        require(BuyRequest[_requestId].sellerId == msg.sender);
-        BuyRequest[_requestId].requestStatus = reqStatus.accepted;
-        transferCount++;
-        TransferRequest[transferCount] = landTransferRequest(
-            BuyRequest[_requestId].landId,
-            msg.sender,
-            BuyRequest[_requestId].buyerId,
-            reqStatus.pending
-        );
-        allTransferRequest[1].push(transferCount);
-    }
-
-    function allTransferRequestList() public view returns (uint[] memory) {
-        return allTransferRequest[1];
+        require(landRequest[_requestId].sellerId == msg.sender);
+        landRequest[_requestId].requestStatus = reqStatus.accepted;
     }
 
     function rejectRequest(uint _requestId) public {
-        require(BuyRequest[_requestId].sellerId == msg.sender);
-        BuyRequest[_requestId].requestStatus = reqStatus.rejected;
+        require(landRequest[_requestId].sellerId == msg.sender);
+        landRequest[_requestId].requestStatus = reqStatus.rejected;
     }
 
-    function buyRequestStatus(uint id) public view returns (bool) {
-        return (BuyRequest[id].requestStatus == reqStatus.accepted);
+    function landPrice(uint id) public view returns (uint) {
+        return lands[id].landPrice;
     }
 
-    function transferRequestStatus(uint id) public view returns (bool) {
-        return (TransferRequest[id].requestStatus == reqStatus.accepted);
+    function makePayment(uint _requestId) public payable {
+        require(
+            landRequest[_requestId].buyerId == msg.sender &&
+                landRequest[_requestId].requestStatus == reqStatus.accepted
+        );
+
+        landRequest[_requestId].requestStatus = reqStatus.paymentdone;
+        lands[landRequest[_requestId].landId].landOwner.transfer(msg.value);
+        landRequest[_requestId].isPaymentDone = true;
+        paymentDoneList[1].push(_requestId);
     }
 
     function transferOwnership(
@@ -383,31 +390,36 @@ contract LandRecords {
         string memory documentUrl
     ) public returns (bool) {
         require(isLandInspector(msg.sender));
+        if (landRequest[_requestId].isPaymentDone == false) return false;
 
-        TransferRequest[_requestId].requestStatus = reqStatus.accepted;
-        usersLands[TransferRequest[_requestId].buyerId].push(
-            TransferRequest[_requestId].landId
+        landRequest[_requestId].requestStatus = reqStatus.completed;
+        usersLands[landRequest[_requestId].buyerId].push(
+            landRequest[_requestId].landId
         );
 
-        uint len = usersLands[TransferRequest[_requestId].sellerId].length;
+        uint len = usersLands[landRequest[_requestId].sellerId].length;
         for (uint i = 0; i < len; i++) {
             if (
-                usersLands[TransferRequest[_requestId].sellerId][i] ==
-                TransferRequest[_requestId].landId
+                usersLands[landRequest[_requestId].sellerId][i] ==
+                landRequest[_requestId].landId
             ) {
-                usersLands[TransferRequest[_requestId].sellerId][
-                    i
-                ] = usersLands[TransferRequest[_requestId].sellerId][len - 1];
+                usersLands[landRequest[_requestId].sellerId][i] = usersLands[
+                    landRequest[_requestId].sellerId
+                ][len - 1];
                 //MyLands[LandRequestMapping[_requestId].sellerId].length--;
-                usersLands[TransferRequest[_requestId].sellerId].pop();
+                usersLands[landRequest[_requestId].sellerId].pop();
                 break;
             }
         }
-        lands[TransferRequest[_requestId].landId].landDocument = documentUrl;
-        lands[TransferRequest[_requestId].landId].isForSell = false;
-        lands[TransferRequest[_requestId].landId].landOwner = payable(
-            TransferRequest[_requestId].buyerId
+        lands[landRequest[_requestId].landId].landDocument = documentUrl;
+        lands[landRequest[_requestId].landId].isForSell = false;
+        lands[landRequest[_requestId].landId].landOwner = payable(
+            landRequest[_requestId].buyerId
         );
         return true;
+    }
+
+    function makePaymentTestFun(address payable _receiver) public payable {
+        _receiver.transfer(msg.value);
     }
 }
