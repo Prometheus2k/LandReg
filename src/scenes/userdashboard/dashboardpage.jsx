@@ -3,7 +3,6 @@ import {
   Box,
   TextField,
   useMediaQuery,
-  useTheme,
   Typography,
   Stack,
   Button,
@@ -13,11 +12,9 @@ import { useEffect, useState } from "react";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import UnpublishedIcon from "@mui/icons-material/Unpublished";
 const Dashboardpage = () => {
-  const theme = useTheme();
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
-  const { provider, setProvider, signer, setSigner, contract, setContract } =
-    LandState();
+  const { signer, contract } = LandState();
 
   const [values, setValues] = useState("");
   const openInNewTab = (url) => {
@@ -33,15 +30,6 @@ const Dashboardpage = () => {
     getUser();
   }, [contract, signer]);
 
-  // const values = {
-  //   fullname: "John Due",
-  //   email: "johndue@gmail.com",
-  //   age: "30",
-  //   city: "Surat",
-  //   document: "aadhar.png",
-  //   aadharcardno: "3333-4444-5555-6666",
-  //   pancardno: "NTDO9385",
-  // };
   return (
     <form>
       <Box sx={{ paddingBottom: 2 }}>
@@ -119,15 +107,6 @@ const Dashboardpage = () => {
           variant="filled"
           sx={{ gridColumn: "span 2" }}
         />
-        {/* <TextField
-          required
-          id="filled-required"
-          label="Document"
-          value={values.document}
-          defaultValue="document"
-          variant="filled"
-          sx={{ gridColumn: "span 2" }}
-        /> */}
 
         <TextField
           required

@@ -22,9 +22,9 @@ const Dashboardpage = () => {
   });
   useEffect(() => {
     const getCount = async () => {
-      const users = await contract.userCount();
-      const lands = await contract.LandCount();
-      const transfers = await contract.transferRequestCount();
+      const users = await contract.totalUsersCount();
+      const lands = await contract.totalLandsCount();
+      const transfers = await contract.transferCount();
       setCount({
         users,
         lands,

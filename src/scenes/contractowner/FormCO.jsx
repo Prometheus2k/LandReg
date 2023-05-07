@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  TextField,
-  useMediaQuery,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, TextField, useMediaQuery, useTheme } from "@mui/material";
 
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -25,8 +18,7 @@ const FormCO = () => {
   const navigate = useNavigate();
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const { provider, setProvider, signer, setSigner, contract, setContract } =
-    LandState();
+  const { contract } = LandState();
 
   return (
     <Formik

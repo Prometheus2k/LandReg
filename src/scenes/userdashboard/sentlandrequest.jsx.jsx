@@ -11,30 +11,25 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { LandState } from "context/landProvider";
+import { ethers } from "ethers";
 
-function createData(number, land_id, buyer_address, seller_address, transfer) {
-  return { number, land_id, buyer_address, seller_address, transfer };
-}
-
-const rows = [createData(1, "loremipsum", 350, 12345678, "transfer")];
-
-const TransferOwnershipPage = () => {
+const SentLandRequestPage = () => {
   const { contract } = LandState();
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    const fetchTransferRequests = async () => {
-      const transReq = await contract.allLandRequestsDetails();
-      console.log(transReq);
-      setRows(transReq);
+    const fetchMySentLandRequests = async () => {
+      const sentReq = await contract.mySentLandRequestsDetails();
+      console.log(sentReq);
+      setRows(sentReq);
     };
-    fetchTransferRequests();
+    fetchMySentLandRequests();
   }, [contract]);
 
-  const Transferland = async (id) => {
-    const documentUrl =
-      "https://www.amardasseducation.com/images/ncte/land-document-01.jpg";
-    await contract.transferOwnership(id, documentUrl);
+  const makeLandPayment = async (id, price) => {
+    await contract.makePayment(id, {
+      value: ethers.utils.parseUnits(price, "ether"),
+    });
   };
 
   return (
@@ -44,11 +39,10 @@ const TransferOwnershipPage = () => {
           <TableRow>
             <TableCell>#</TableCell>
             <TableCell align="center">Land ID</TableCell>
-            <TableCell align="center">Buyer Address</TableCell>
-            <TableCell align="center">Seller Address</TableCell>
+            <TableCell align="center">Owner Address</TableCell>
             <TableCell align="center">Status</TableCell>
             <TableCell align="center">Price(in ETH)</TableCell>
-            <TableCell align="center">Transfer</TableCell>
+            <TableCell align="center">Make Payment</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -61,30 +55,31 @@ const TransferOwnershipPage = () => {
                 {row.reqId + ""}
               </TableCell>
               <TableCell align="center">{row.landId}</TableCell>
-              <TableCell align="center">{row.buyerId}</TableCell>
               <TableCell align="center">{row.sellerId}</TableCell>
               <TableCell align="center">{row.requestStatus}</TableCell>
               <TableCell align="center">
                 {await contract.landPrice(row.landId)}
               </TableCell>
-              {row.requestStatus === 4 ? (
-                <TableCell align="center">
+              <TableCell align="center">
+                {(await contract.requestStatus(rows.landId)) === 2 ? (
                   <Button
-                    variant="contained"
-                    onClick={() => {
-                      Transferland(row.reqId);
+                    onClick={async () => {
+                      makeLandPayment(
+                        row.reqId,
+                        await contract.landPrice(row.landId),
+                      );
                     }}
+                    color="success"
+                    variant="contained"
                   >
-                    Transfer
+                    Make Payment
                   </Button>
-                </TableCell>
-              ) : (
-                <TableCell align="center">
+                ) : (
                   <Button variant="contained" disabled>
-                    Transfer
+                    Unable to Pay/Paid
                   </Button>
-                </TableCell>
-              )}
+                )}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -93,4 +88,4 @@ const TransferOwnershipPage = () => {
   );
 };
 
-export default TransferOwnershipPage;
+export default SentLandRequestPage;

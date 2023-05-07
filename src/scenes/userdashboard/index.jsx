@@ -28,8 +28,8 @@ import Dashboardpage from "./dashboardpage";
 import AddLandpage from "./addlandpage/index.jsx";
 import MyLandpage from "./myland";
 import LandGallerypage from "./landgallery";
-import Receivedpage from "./receivedrequest";
-import Sentpage from "./sent";
+import ReceivedLandRequestPage from "./receivedlandrequest.jsx";
+import SentLandRequestPage from "./sentlandrequest.jsx";
 import { LandState } from "context/landProvider";
 import { useEffect } from "react";
 import LoginPage from "scenes/loginpage";
@@ -179,9 +179,9 @@ export default function UserDashboard() {
       case 4:
         return <LandGallerypage />;
       case 5:
-        return <Receivedpage />;
+        return <ReceivedLandRequestPage />;
       case 6:
-        return <Sentpage />;
+        return <SentLandRequestPage />;
       default:
         return <Dashboardpage />;
     }

@@ -12,14 +12,10 @@ import {
   Grid,
   Stack,
 } from "@mui/material";
-import landgallery from "asset/landgallery.png";
 import { LandState } from "context/landProvider";
 import { useEffect, useState } from "react";
-import VerifiedIcon from "@mui/icons-material/Verified";
-import UnpublishedIcon from "@mui/icons-material/Unpublished";
 const LandGallerypage = () => {
-  const { provider, setProvider, signer, setSigner, contract, setContract } =
-    LandState();
+  const { signer, contract } = LandState();
   const [myLands, setMyLands] = useState([]);
   const [account, setAccount] = useState("");
   const openInNewTab = (url) => {
@@ -36,12 +32,15 @@ const LandGallerypage = () => {
     fetchMyLands();
   }, [contract, signer]);
 
-  const buyLand = async (id) => {
-    console.log(id);
-    const check = await contract.buyRequestStatus(id);
-    console.log(check);
+  const buyRequest = async (id) => {
     const res = await contract.requestforBuy(id);
     console.log(res);
+  };
+
+  const fetchRequestStatus = async (id) => {
+    const res = await contract.requestStatus(id);
+    console.log(res);
+    return res;
   };
 
   return (
@@ -66,7 +65,7 @@ const LandGallerypage = () => {
                       <Card sx={{ maxWidth: 345 }}>
                         <CardMedia
                           sx={{ height: 140 }}
-                          image={land.landDocument}
+                          image={land.landPicture}
                           title="ground"
                         />
                         <CardContent>
@@ -78,7 +77,7 @@ const LandGallerypage = () => {
                             {land.landAddress}
                           </Typography>
                           <Typography variant="body2" color="text.secondary">
-                            {land.surveyNumber}
+                            {"Price : " + land.landPrice}
                           </Typography>
                         </CardContent>
                         <CardActions>
@@ -89,13 +88,19 @@ const LandGallerypage = () => {
                             >
                               View Doc
                             </Button>
-                            <Button
-                              onClick={() => buyLand(land.id)}
-                              color="info"
-                              variant="contained"
-                            >
-                              Buy
-                            </Button>
+                            {fetchRequestStatus(land.id) === "1" ? (
+                              <Button disabled variant="text">
+                                Buy request sent
+                              </Button>
+                            ) : (
+                              <Button
+                                onClick={() => buyRequest(land.id)}
+                                color="info"
+                                variant="contained"
+                              >
+                                Request to Buy
+                              </Button>
+                            )}
                           </Stack>
                         </CardActions>
                       </Card>

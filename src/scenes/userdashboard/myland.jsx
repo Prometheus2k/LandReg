@@ -12,22 +12,24 @@ import {
   Grid,
   Stack,
 } from "@mui/material";
-import landgallery from "asset/landgallery.png";
 import { LandState } from "context/landProvider";
 import { useEffect, useState } from "react";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import UnpublishedIcon from "@mui/icons-material/Unpublished";
 const MyLandpage = () => {
-  const { provider, setProvider, signer, setSigner, contract, setContract } =
-    LandState();
+  const { signer, contract } = LandState();
   const [myLands, setMyLands] = useState([]);
   const openInNewTab = (url) => {
     window.open(url, "_blank", "noreferrer");
   };
 
-  const sellLand = async (id) => {
+  const makeitforsell = async (id) => {
     console.log(id);
     const res = await contract.makeItforSell(id);
+    console.log(res);
+  };
+  const makeItNotforSell = async (id) => {
+    const res = await contract.makeItNotforSell(id);
     console.log(res);
   };
   useEffect(() => {
@@ -104,22 +106,27 @@ const MyLandpage = () => {
                           View Doc
                         </Button>
                         {land.isForSell && (
-                          <Button color="success" variant="contained">
-                            Waiting for Buyer
+                          <Button
+                            onClick={() => makeItNotforSell(land.id)}
+                            color="error"
+                            variant="contained"
+                          >
+                            Make it Not for Sell
                           </Button>
                         )}
                         {land.isLandVerified && !land.isForSell && (
                           <Button
-                            onClick={() => sellLand(land.id)}
-                            color="error"
+                            onClick={() => makeitforsell(land.id)}
+                            color="success"
                             variant="contained"
                           >
                             Make it for Sell
                           </Button>
                         )}
+
                         {!land.isLandVerified && (
                           <Button variant="contained" disabled>
-                            Make it for Sell
+                            Unable to Sell
                           </Button>
                         )}
                       </Stack>
