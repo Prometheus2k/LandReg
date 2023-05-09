@@ -7,11 +7,10 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { LandState } from "context/landProvider";
-import { ethers } from "ethers";
+import SentRequest from "./utils/SentRequest";
 
 const SentLandRequestPage = () => {
   const { contract } = LandState();
@@ -25,12 +24,6 @@ const SentLandRequestPage = () => {
     };
     fetchMySentLandRequests();
   }, [contract]);
-
-  const makeLandPayment = async (id, price) => {
-    await contract.makePayment(id, {
-      value: ethers.utils.parseUnits(price, "ether"),
-    });
-  };
 
   return (
     <TableContainer component={Paper}>
@@ -46,42 +39,8 @@ const SentLandRequestPage = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(async (row) => (
-            <TableRow
-              key={row.reqId + ""}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.reqId + ""}
-              </TableCell>
-              <TableCell align="center">{row.landId}</TableCell>
-              <TableCell align="center">{row.sellerId}</TableCell>
-              <TableCell align="center">{row.requestStatus}</TableCell>
-              <TableCell align="center">
-                {await contract.landPrice(row.landId)}
-              </TableCell>
-              <TableCell align="center">
-                {(await contract.requestStatus(rows.landId)) === 2 ? (
-                  <Button
-                    onClick={async () => {
-                      makeLandPayment(
-                        row.reqId,
-                        await contract.landPrice(row.landId),
-                      );
-                    }}
-                    color="success"
-                    variant="contained"
-                  >
-                    Make Payment
-                  </Button>
-                ) : (
-                  <Button variant="contained" disabled>
-                    Unable to Pay/Paid
-                  </Button>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
+          {rows.length > 0 &&
+            rows.map((row) => <SentRequest key={row.reqId} row={row} />)}
         </TableBody>
       </Table>
     </TableContainer>

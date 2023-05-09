@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { LandState } from "context/landProvider";
+import TransferRequest from "./utils/TransferRequest";
 
 function createData(number, land_id, buyer_address, seller_address, transfer) {
   return { number, land_id, buyer_address, seller_address, transfer };
@@ -31,12 +32,6 @@ const TransferOwnershipPage = () => {
     fetchTransferRequests();
   }, [contract]);
 
-  const Transferland = async (id) => {
-    const documentUrl =
-      "https://www.amardasseducation.com/images/ncte/land-document-01.jpg";
-    await contract.transferOwnership(id, documentUrl);
-  };
-
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -46,47 +41,17 @@ const TransferOwnershipPage = () => {
             <TableCell align="center">Land ID</TableCell>
             <TableCell align="center">Buyer Address</TableCell>
             <TableCell align="center">Seller Address</TableCell>
+            <TableCell align="center">Land Address</TableCell>
+            <TableCell align="center">Document</TableCell>
+            <TableCell align="center">Picture</TableCell>
             <TableCell align="center">Status</TableCell>
             <TableCell align="center">Price(in ETH)</TableCell>
             <TableCell align="center">Transfer</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(async (row) => (
-            <TableRow
-              key={row.reqId + ""}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.reqId + ""}
-              </TableCell>
-              <TableCell align="center">{row.landId}</TableCell>
-              <TableCell align="center">{row.buyerId}</TableCell>
-              <TableCell align="center">{row.sellerId}</TableCell>
-              <TableCell align="center">{row.requestStatus}</TableCell>
-              <TableCell align="center">
-                {await contract.landPrice(row.landId)}
-              </TableCell>
-              {row.requestStatus === 4 ? (
-                <TableCell align="center">
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      Transferland(row.reqId);
-                    }}
-                  >
-                    Transfer
-                  </Button>
-                </TableCell>
-              ) : (
-                <TableCell align="center">
-                  <Button variant="contained" disabled>
-                    Transfer
-                  </Button>
-                </TableCell>
-              )}
-            </TableRow>
-          ))}
+          {rows.length > 0 &&
+            rows.map((row) => <TransferRequest key={row.reqId} row={row} />)}
         </TableBody>
       </Table>
     </TableContainer>
