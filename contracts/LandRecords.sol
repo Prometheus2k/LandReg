@@ -289,6 +289,27 @@ contract LandRecords {
         return allLands;
     }
 
+    function returnAllLandsByCity(string memory city)
+        public
+        view
+        returns (Land[] memory)
+    {
+        uint len = allLandList[1].length;
+        Land[] memory allLands = new Land[](len);
+        for (uint i = 0; i < len; i++) {
+            if (
+                keccak256(
+                    abi.encodePacked(addressToUser[lands[allLandList[1][i]].landOwner].city)
+                ) == keccak256(abi.encodePacked(city))
+            ) {
+                allLands[i] = lands[allLandList[1][i]];
+            }
+        }
+        return allLands;
+    }
+
+   
+
     function makeItforSell(uint id) public {
         require(lands[id].landOwner == msg.sender);
         lands[id].isForSell = true;
@@ -359,6 +380,25 @@ contract LandRecords {
         return allLandRequests;
     }
 
+    function allLandRequestsDetailsByCity (string memory city)
+        public
+        view
+        returns (LandRequest[] memory)
+    {
+        uint len = totalRequestCount;
+        LandRequest[] memory allLandRequests = new LandRequest[](len);
+        for (uint i = 0; i < len; i++) {
+            if (
+                keccak256(
+                    abi.encodePacked(addressToUser[landRequest[i + 1].buyerId].city)
+                ) == keccak256(abi.encodePacked(city))
+            ) {
+                allLandRequests[i] = landRequest[i + 1];
+            }
+        }
+        return allLandRequests;
+    }
+
     function acceptRequest(uint _requestId) public {
         require(landRequest[_requestId].sellerId == msg.sender);
         landRequest[_requestId].requestStatus = reqStatus.accepted;
@@ -391,7 +431,7 @@ contract LandRecords {
     ) public returns (bool) {
         require(isLandInspector(msg.sender));
         if (landRequest[_requestId].isPaymentDone == false) return false;
-
+        transferCount++;
         landRequest[_requestId].requestStatus = reqStatus.completed;
         usersLands[landRequest[_requestId].buyerId].push(
             landRequest[_requestId].landId
