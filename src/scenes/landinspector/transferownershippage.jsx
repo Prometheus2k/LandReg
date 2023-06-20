@@ -20,17 +20,21 @@ function createData(number, land_id, buyer_address, seller_address, transfer) {
 const rows = [createData(1, "loremipsum", 350, 12345678, "transfer")];
 
 const TransferOwnershipPage = () => {
-  const { contract } = LandState();
+  const { signer, contract } = LandState();
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
     const fetchTransferRequests = async () => {
-      const transReq = await contract.allLandRequestsDetails();
+      const address = await signer.getAddress();
+      const landInspector = await contract.returnLandInspector(address);
+      const transReq = await contract.allLandRequestsDetailsByCity(
+        landInspector.city,
+      );
       console.log(transReq);
       setRows(transReq);
     };
     fetchTransferRequests();
-  }, [contract]);
+  }, [contract, signer]);
 
   return (
     <TableContainer component={Paper}>
@@ -51,7 +55,10 @@ const TransferOwnershipPage = () => {
         </TableHead>
         <TableBody>
           {rows.length > 0 &&
-            rows.map((row) => <TransferRequest key={row.reqId} row={row} />)}
+            rows.map(
+              (row) =>
+                row.reqId > 0 && <TransferRequest key={row.reqId} row={row} />,
+            )}
         </TableBody>
       </Table>
     </TableContainer>

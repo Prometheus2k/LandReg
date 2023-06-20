@@ -1,18 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   IconButton,
   Typography,
   useTheme,
   useMediaQuery,
+  Button,
 } from "@mui/material";
 import { Menu, Close } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
+import ConnectWallet from "web3";
 import { LandState } from "context/landProvider";
 
 const NavbarPage = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
+  const [address, setAddress] = useState("");
   const navigate = useNavigate();
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
@@ -20,7 +23,34 @@ const NavbarPage = () => {
   const background = theme.palette.background.default;
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
-  const { signer, contract } = LandState();
+  const { provider, setProvider, signer, setSigner, contract, setContract } =
+    LandState();
+
+  useEffect(() => {
+    const fecthAddress = async () => {
+      if (signer) {
+        const addr = await signer.getAddress();
+        setAddress(addr);
+      }
+    };
+    fecthAddress();
+  }, [signer]);
+
+  const loadweb3data = async () => {
+    const { provider, signer, contract } = await ConnectWallet();
+
+    // console.log(provider, signer, contract);
+    setProvider(provider);
+    setSigner(signer);
+    setContract(contract);
+
+    // if (provider || signer || contract) {
+    //   sessionStorage.setItem("reloading", "true");
+    // }
+
+    const addr = await signer.getAddress();
+    setAddress(addr);
+  };
   const contractOwnerLogin = async () => {
     let contractOwnerAddress = await signer.getAddress();
     let isContractOwnerAuth = await contract.isContractOwner(
@@ -119,18 +149,47 @@ const NavbarPage = () => {
             >
               Contract Owner
             </Typography>
-            <Typography
-              sx={{
-                fontSize: "17px",
-                "&:hover": {
-                  color: primaryLight,
-                  cursor: "pointer",
-                },
-              }}
-              onClick={() => navigate("/about")}
-            >
-              About
-            </Typography>
+            {provider || signer || contract ? (
+              <Button
+                sx={{
+                  fontSize: "15px",
+                  borderRadius: "20px",
+                  "&:hover": {
+                    color: primaryLight,
+                    cursor: "pointer",
+                  },
+                }}
+                // size="large"
+                variant="contained"
+                color="primary"
+                href="#contained-buttons"
+                onClick={async () => {
+                  loadweb3data();
+                }}
+              >
+                {address.slice(0, 6) + "..." + address.slice(-4)}
+              </Button>
+            ) : (
+              <Button
+                sx={{
+                  fontSize: "15px",
+                  borderRadius: "20px",
+                  "&:hover": {
+                    color: primaryLight,
+                    cursor: "pointer",
+                  },
+                }}
+                // size="large"
+                variant="contained"
+                color="primary"
+                href="#contained-buttons"
+                onClick={async () => {
+                  loadweb3data();
+                }}
+              >
+                Connect
+              </Button>
+            )}
           </FlexBetween>
         ) : (
           <IconButton
@@ -205,12 +264,47 @@ const NavbarPage = () => {
               >
                 Contract Owner
               </Typography>
-              <Typography
-                sx={{ fontSize: "17px" }}
-                onClick={() => navigate("/about")}
-              >
-                About
-              </Typography>
+              {provider || signer || contract ? (
+                <Button
+                  sx={{
+                    fontSize: "15px",
+                    borderRadius: "20px",
+                    "&:hover": {
+                      color: primaryLight,
+                      cursor: "pointer",
+                    },
+                  }}
+                  // size="large"
+                  variant="contained"
+                  color="primary"
+                  href="#contained-buttons"
+                  onClick={async () => {
+                    loadweb3data();
+                  }}
+                >
+                  {address.slice(0, 6) + "..." + address.slice(-4)}
+                </Button>
+              ) : (
+                <Button
+                  sx={{
+                    fontSize: "15px",
+                    borderRadius: "20px",
+                    "&:hover": {
+                      color: primaryLight,
+                      cursor: "pointer",
+                    },
+                  }}
+                  // size="large"
+                  variant="contained"
+                  color="primary"
+                  href="#contained-buttons"
+                  onClick={async () => {
+                    loadweb3data();
+                  }}
+                >
+                  Connect
+                </Button>
+              )}
             </FlexBetween>
           </Box>
         )}

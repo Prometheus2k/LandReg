@@ -90,6 +90,9 @@ const Form = () => {
 
     setIPFSHASH(response.data.IpfsHash);
     console.log(myipfsHash);
+    if (response.data.IpfsHash) {
+      alert("File Uploaded Successfully");
+    }
   };
 
   const isNonMobile = useMediaQuery("(min-width:600px)");

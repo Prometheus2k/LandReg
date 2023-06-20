@@ -30,21 +30,12 @@ import { useEffect, useState } from "react";
 
 const VerifyLandPage = () => {
   const [rows, setRows] = useState([]);
-  const {
-    provider,
-    setProvider,
-    signer,
-    setSigner,
-    contract,
-    setContract,
-    CO_page,
-    setCOPage,
-    LI_page,
-    setLIPage,
-  } = LandState();
+  const { signer, contract } = LandState();
   useEffect(() => {
     const verifyLand = async () => {
-      const res = await contract.returnAllLands();
+      const address = await signer.getAddress();
+      const landInspector = await contract.returnLandInspector(address);
+      const res = await contract.returnAllLandsByCity(landInspector.city);
       console.log(res);
       setRows(res);
     };
@@ -80,52 +71,55 @@ const VerifyLandPage = () => {
         </TableHead>
         <TableBody>
           {rows.length > 0 &&
-            rows.map((row) => (
-              <TableRow
-                key={row.id + ""}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.id + ""}
-                </TableCell>
-                <TableCell align="center">{row.landOwner}</TableCell>
-                <TableCell align="center">{row.landArea + ""}</TableCell>
-                <TableCell align="center">{row.landPrice + ""}</TableCell>
-                <TableCell align="center">{row.surveyNumber}</TableCell>
-                <TableCell align="center">{row.landAddress}</TableCell>
-                <TableCell align="center">
-                  <Button
-                    variant="text"
-                    onClick={() => openInNewTab(row.landDocument)}
+            rows.map(
+              (row) =>
+                row.landDocument !== "" && (
+                  <TableRow
+                    key={row.id + ""}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
-                    View Document
-                  </Button>
-                </TableCell>
-                <TableCell align="center">
-                  <Button
-                    variant="text"
-                    onClick={() => openInNewTab(row.landPicture)}
-                  >
-                    View Picture
-                  </Button>
-                </TableCell>
-                <TableCell align="center">
-                  {row.isLandVerified && (
-                    <Button variant="contained" disabled>
-                      verified
-                    </Button>
-                  )}
-                  {!row.isLandVerified && (
-                    <Button
-                      variant="contained"
-                      onClick={() => landVerify(row.id)}
-                    >
-                      verify
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                    <TableCell component="th" scope="row">
+                      {row.id + ""}
+                    </TableCell>
+                    <TableCell align="center">{row.landOwner}</TableCell>
+                    <TableCell align="center">{row.landArea + ""}</TableCell>
+                    <TableCell align="center">{row.landPrice + ""}</TableCell>
+                    <TableCell align="center">{row.surveyNumber}</TableCell>
+                    <TableCell align="center">{row.landAddress}</TableCell>
+                    <TableCell align="center">
+                      <Button
+                        variant="text"
+                        onClick={() => openInNewTab(row.landDocument)}
+                      >
+                        View Document
+                      </Button>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Button
+                        variant="text"
+                        onClick={() => openInNewTab(row.landPicture)}
+                      >
+                        View Picture
+                      </Button>
+                    </TableCell>
+                    <TableCell align="center">
+                      {row.isLandVerified && (
+                        <Button variant="contained" disabled>
+                          verified
+                        </Button>
+                      )}
+                      {!row.isLandVerified && (
+                        <Button
+                          variant="contained"
+                          onClick={() => landVerify(row.id)}
+                        >
+                          verify
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ),
+            )}
         </TableBody>
       </Table>
     </TableContainer>

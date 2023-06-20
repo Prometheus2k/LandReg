@@ -15,8 +15,7 @@ import { LandState } from "context/landProvider";
 
 function App() {
   const theme = createTheme(themeSettings());
-  const { provider, setProvider, signer, setSigner, contract, setContract } =
-    LandState();
+  const { setProvider, setSigner, setContract } = LandState();
   useEffect(() => {
     async function loadweb3data() {
       const { provider, signer, contract } = await ConnectWallet();
@@ -26,11 +25,19 @@ function App() {
       setContract(contract);
     }
     loadweb3data();
-  }, []);
+    // window.onload = function () {
+    //   var reloading = sessionStorage.getItem("reloading");
+    //   console.log("reloading", reloading);
+    //   if (reloading) {
+    //     loadweb3data();
+    //     sessionStorage.removeItem("reloading");
+    //   }
+    // };
+  }, [setContract, setProvider, setSigner]);
 
   return (
     <div className="App">
-      {console.log(provider, signer, contract)}
+      {/* {console.log(provider, signer, contract)} */}
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>

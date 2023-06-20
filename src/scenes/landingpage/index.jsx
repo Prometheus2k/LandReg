@@ -18,9 +18,37 @@ import lp_image from "asset/lp_image.png";
 import land_inspector from "asset/land_inspector.png";
 import user_image from "asset/user_image.png";
 import contract_owner from "asset/contract_owner.png";
+import { useNavigate } from "react-router-dom";
+import { LandState } from "context/landProvider";
 
 const LandingPage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+  const navigate = useNavigate();
+  const { signer, contract } = LandState();
+  const contractOwnerLogin = async () => {
+    let contractOwnerAddress = await signer.getAddress();
+    let isContractOwnerAuth = await contract.isContractOwner(
+      contractOwnerAddress,
+    );
+    return isContractOwnerAuth;
+  };
+
+  const landInspectorLogin = async () => {
+    const { signer, contract } = LandState();
+    let landInspectorAddress = await signer.getAddress();
+    let isLandInspectorAuth = await contract.isLandInspector(
+      landInspectorAddress,
+    );
+    return isLandInspectorAuth;
+  };
+
+  const userLogin = async () => {
+    const { signer, contract } = LandState();
+    let userAddress = await signer.getAddress();
+    let isUserAuth = await contract.isUserRegistered(userAddress);
+    console.log(isUserAuth);
+    return isUserAuth;
+  };
 
   return (
     <Box>
@@ -85,7 +113,13 @@ const LandingPage = () => {
                   size="large"
                   variant="contained"
                   color="primary"
-                  href="#contained-buttons"
+                  onClick={async () => {
+                    if (await contractOwnerLogin()) {
+                      navigate("/contract_owner");
+                    } else {
+                      alert("You are not a contract owner");
+                    }
+                  }}
                 >
                   Continue
                 </Button>
@@ -115,7 +149,13 @@ const LandingPage = () => {
                   size="large"
                   variant="contained"
                   color="primary"
-                  href="#contained-buttons"
+                  onClick={async () => {
+                    if (await landInspectorLogin()) {
+                      navigate("/land_inspector");
+                    } else {
+                      alert("You are not a land inspector");
+                    }
+                  }}
                 >
                   Continue
                 </Button>
@@ -145,7 +185,13 @@ const LandingPage = () => {
                   size="large"
                   variant="contained"
                   color="primary"
-                  href="#contained-buttons"
+                  onClick={async () => {
+                    if (await userLogin()) {
+                      navigate("/user");
+                    } else {
+                      navigate("/user/registration");
+                    }
+                  }}
                 >
                   Continue
                 </Button>

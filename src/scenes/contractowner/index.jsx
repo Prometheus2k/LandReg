@@ -31,10 +31,19 @@ import { LandState } from "context/landProvider";
 const drawerWidth = 240;
 
 export default function ContractDashboard() {
+  const { signer, contract, CO_page, setCOPage } = LandState();
+  useEffect(() => {
+    const getLI = async () => {
+      const res = await contract.returnAllLandInspectorsDetails();
+      res.forEach(async (inspector) => {
+        await contract.transferOwnership(inspector);
+      });
+    };
+    getLI();
+  }, [contract]);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [address, setAddress] = useState("");
   const navigate = useNavigate();
-  const { signer, CO_page, setCOPage } = LandState();
 
   useEffect(() => {
     const getCOAddress = async () => {
